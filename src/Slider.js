@@ -47,10 +47,32 @@ const Navigation = ({
     }),
     [sizePoints]
   );
+  const shiftPoint = useMemo(() => (sizeNavButton - sizePoints) / 2, [sizePoints, sizeNavButton]);
+  const stylePoint = useMemo(
+    () => ({
+      top: `${shiftPoint}px`,
+      left: `${shiftPoint}px`,
+    }),
+    [shiftPoint]
+  );
   const styleNav = useMemo(() => navigationDirections[navigationDirection], [navigationDirection]);
+  const getPointPosition = useCallback(
+    number => {
+      if (navigationDirection === 'center') {
+        return {
+          transform: `translateX(${(shiftPoint + indentBetweenNavButtons * 2) * number}px)`,
+        };
+      }
+
+      return {
+        transform: `translateY(${(shiftPoint + indentBetweenNavButtons * 2) * number}px)`,
+      };
+    },
+    [navigationDirection, sizeNavButton, indentBetweenNavButtons, sizePoints]
+  );
   return (
     <div className="wave-slider-nav" style={styleNav}>
-      {/* <div className="wave-slider-nav__point" /> */}
+      <div className="wave-slider-nav__point" style={{ ...stylePoints, ...stylePoint, ...getPointPosition(slide) }} />
       {Array(count)
         .fill()
         .map((_, i) => (
@@ -135,7 +157,7 @@ Slider.defaultProps = {
   speedAnimation: 300,
   typeAnimation: 'ease',
   navigation: true,
-  navigationDirection: 'center',
+  navigationDirection: 'left',
   sizeNavButton: 30,
   indentBetweenNavButtons: 20,
   sizePoints: 10,
