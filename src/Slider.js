@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react';
+import React, { useMemo, useReducer, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import './Slider.css';
@@ -48,7 +48,7 @@ const Navigation = ({
             key={i} // eslint-disable-line react/no-array-index-key
             className={cn('wave-slider-nav__item', i === slide && 'wave-slider-nav__item_active', classNameButtons)}
             type="button"
-            onClick={toSlide(i)}
+            onClick={toSlide({ count: i })}
             style={{ ...styleNavButton, ...getStyleNavButton(i) }}
           >
             <span className={cn('wave-slider-nav__points', classNamePoints)} style={stylePoints} />
@@ -94,6 +94,21 @@ const swipeEnd = () => {
   clickPos = null;
 };
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'next':
+      if (state + 1 === action.count) return 0;
+      return state + 1;
+
+    case 'back':
+      if (state === 0) return action.count - 1;
+      return state - 1;
+
+    default:
+      return action.count;
+  }
+};
+
 const Slider = ({
   className,
   transitionDuration,
@@ -105,29 +120,22 @@ const Slider = ({
   isReverse,
   stopOnHover,
   autoPlay,
-  sensitivity,
+  offsetForSwipeStep,
   withSwipe,
+  withFixedWidth,
   ...navProps
 }) => {
-  const [slide, setSlide] = useState(initialSlide);
+  const [slide, setSlide] = useReducer(reducer, initialSlide);
   const toSlide = useCallback(number => () => setSlide(number), []);
   const count = useMemo(() => children.length, [children]);
 
   const next = useCallback(() => {
-    setSlide(v => {
-      const increase = v + 1;
-      if (increase === count) return 0;
-      return increase;
-    });
+    setSlide({ type: 'next', count });
     play();
   }, [count]);
 
   const back = useCallback(() => {
-    setSlide(v => {
-      const decrease = v - 1;
-      if (decrease === -1) return count - 1;
-      return decrease;
-    });
+    setSlide({ type: 'back', count });
     play();
   }, [count]);
 
@@ -162,14 +170,14 @@ const Slider = ({
             if (clickPos === null) return;
             const clientX = e.clientX || e.touches[0].clientX;
             const d = clientX - clickPos;
-            if (Math.abs(d) > sensitivity) {
+            if (Math.abs(d) > offsetForSwipeStep) {
               if (d > 0) next();
               else back();
               clickPos = clientX;
             }
           }
         : () => {},
-    [withSwipe, next, back, sensitivity]
+    [withSwipe, next, back, offsetForSwipeStep]
   );
 
   useEffect(() => {
@@ -196,18 +204,27 @@ const Slider = ({
 
   useEffect(() => {
     play();
-    setWidthForSlides();
-    window.addEventListener('resize', setWidthForSlides);
     window.addEventListener('focus', play);
     window.addEventListener('blur', stop);
 
     return () => {
       stop();
-      window.removeEventListener('resize', setWidthForSlides);
       window.removeEventListener('focus', play);
       window.removeEventListener('blur', stop);
     };
   }, [setWidthForSlides, play, stop]);
+
+  useEffect(() => {
+    if (withFixedWidth) {
+      setWidthForSlides();
+      window.addEventListener('resize', setWidthForSlides);
+
+      return () => {
+        window.removeEventListener('resize', setWidthForSlides);
+      };
+    }
+    return null;
+  }, [withFixedWidth]);
 
   const handlersForTotalSlider = useMemo(() => {
     if (stopOnHover) {
@@ -267,11 +284,12 @@ Slider.propTypes = {
   className: PropTypes.string,
   classNameNav: PropTypes.string,
   interval: PropTypes.number,
-  sensitivity: PropTypes.number,
+  offsetForSwipeStep: PropTypes.number,
   initialSlide: PropTypes.number,
   transitionDuration: PropTypes.number,
   transitionTimingFunction: PropTypes.string,
   navigation: PropTypes.bool,
+  withFixedWidth: PropTypes.bool,
   withSwipe: PropTypes.bool,
   autoPlay: PropTypes.bool,
   isReverse: PropTypes.bool,
@@ -289,12 +307,13 @@ Slider.propTypes = {
 Slider.defaultProps = {
   className: undefined,
   classNameNav: undefined,
-  interval: 1000,
-  sensitivity: 50,
+  interval: 3000,
+  offsetForSwipeStep: 50,
   initialSlide: 0,
   transitionDuration: 800,
   transitionTimingFunction: 'ease',
   navigation: true,
+  withFixedWidth: true,
   withSwipe: true,
   autoPlay: true,
   isReverse: false,

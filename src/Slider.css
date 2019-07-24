@@ -1,6 +1,6 @@
 .wave-slider {
   position: relative;
-  height: 500px;
+  height: 300px;
   z-index: 0;
 }
 
@@ -20,6 +20,10 @@
   height: 100%;
   z-index: 0;
   overflow: hidden;
+}
+
+.wave-slider__slide > * {
+  width: 100%;
 }
 
 .wave-slider-nav {
