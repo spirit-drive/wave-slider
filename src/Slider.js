@@ -20,10 +20,10 @@ const Navigation = ({
   const styleNavButton = useMemo(() => ({ width: `${sizeNavButton}px`, height: `${sizeNavButton}px` }), [
     sizeNavButton,
   ]);
-  const margin = useMemo(() => (navigationPosition === 'center' ? 'marginLeft' : 'marginTop'), [navigationPosition]);
-  const translate = useMemo(() => (navigationPosition === 'center' ? 'translateX' : 'translateY'), [
-    navigationPosition,
-  ]);
+  const isCenter = useMemo(() => navigationPosition === 'center', [navigationPosition]);
+  const margin = useMemo(() => (isCenter ? 'marginLeft' : 'marginTop'), [isCenter]);
+  const translate = useMemo(() => (isCenter ? 'translateX' : 'translateY'), [isCenter]);
+
   const getStyleNavButton = useCallback(i => ({ [margin]: i ? `${indentBetweenNavButtons}px` : 0 }), [
     margin,
     indentBetweenNavButtons,
