@@ -11,6 +11,7 @@ const Navigation = ({
   sizePoints,
   indentBetweenNavButtons,
   navigationDirection,
+  classNameNav,
 }) => {
   const getStyleNavButton = useCallback(
     i => ({
@@ -50,7 +51,7 @@ const Navigation = ({
     [navigationDirection, sizeNavButton, indentBetweenNavButtons, sizePoints]
   );
   return (
-    <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationDirection}`)}>
+    <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationDirection}`, classNameNav)}>
       <div className="wave-slider-nav__point" style={{ ...stylePoints, ...stylePoint, ...getPointPosition(slide) }} />
       {Array(count)
         .fill()
@@ -76,6 +77,11 @@ Navigation.propTypes = {
   sizeNavButton: PropTypes.number.isRequired,
   sizePoints: PropTypes.number.isRequired,
   indentBetweenNavButtons: PropTypes.number.isRequired,
+  classNameNav: PropTypes.string,
+};
+
+Navigation.defaultProps = {
+  classNameNav: undefined,
 };
 
 let zIndex = 0;
@@ -106,6 +112,7 @@ const Slider = ({ className, speedAnimation, typeAnimation, children, initialSli
 Slider.propTypes = {
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.func]).isRequired,
   className: PropTypes.string,
+  classNameNav: PropTypes.string,
   interval: PropTypes.number,
   initialSlide: PropTypes.number,
   speedAnimation: PropTypes.number,
@@ -119,6 +126,7 @@ Slider.propTypes = {
 
 Slider.defaultProps = {
   className: undefined,
+  classNameNav: undefined,
   interval: 5000,
   initialSlide: 0,
   speedAnimation: 300,
