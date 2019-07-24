@@ -81,19 +81,6 @@ Navigation.defaultProps = {
   classNameWrapperPoint: undefined,
 };
 
-let zIndex = 0;
-let intervalId = null;
-let clickPos = null;
-let prevSlide = -1;
-
-const swipeStart = e => {
-  clickPos = e.clientX || e.touches[0].clientX;
-};
-
-const swipeEnd = () => {
-  clickPos = null;
-};
-
 const reducer = (state, action) => {
   switch (action.type) {
     case 'next':
@@ -125,6 +112,22 @@ const Slider = ({
   withFixedWidth,
   ...navProps
 }) => {
+  const zIndex = useRef(0);
+  const intervalId = useRef(null);
+  const clickPos = useRef(null);
+  const prevSlide = useRef(-1);
+
+  const swipeStart = useCallback(
+    e => {
+      clickPos.current = e.clientX || e.touches[0].clientX;
+    },
+    [clickPos]
+  );
+
+  const swipeEnd = useCallback(() => {
+    clickPos.current = null;
+  }, [clickPos]);
+
   const [slide, setSlide] = useReducer(reducer, initialSlide);
   const toSlide = useCallback(payload => () => setSlide({ payload }), []);
   const count = useMemo(() => children.length, [children]);
@@ -141,14 +144,14 @@ const Slider = ({
 
   const move = useMemo(() => (isReverse ? back : next), [isReverse, back, next]);
 
-  const stop = useMemo(() => (autoPlay ? () => clearTimeout(intervalId) : () => {}), [autoPlay]);
+  const stop = useMemo(() => (autoPlay ? () => clearTimeout(intervalId.current) : () => {}), [autoPlay]);
 
   const play = useMemo(
     () =>
       autoPlay
         ? () => {
             stop();
-            intervalId = setTimeout(move, interval);
+            intervalId.current = setTimeout(move, interval);
           }
         : () => {},
     [autoPlay, interval, move, stop]
@@ -167,13 +170,13 @@ const Slider = ({
     () =>
       withSwipe
         ? e => {
-            if (clickPos === null) return;
+            if (clickPos.current === null) return;
             const clientX = e.clientX || e.touches[0].clientX;
-            const d = clientX - clickPos;
+            const d = clientX - clickPos.current;
             if (Math.abs(d) > offsetForSwipeStep) {
               if (d > 0) next();
               else back();
-              clickPos = clientX;
+              clickPos.current = clientX;
             }
           }
         : () => {},
@@ -188,15 +191,15 @@ const Slider = ({
 
     style.transition = 'none';
     style.width = '0%';
-    if (prevSlide > slide) {
+    if (prevSlide.current > slide) {
       style.left = 'auto';
       child.style.float = 'right';
     } else {
       style.left = 0;
       child.style.float = 'none';
     }
-    prevSlide = slide;
-    style.zIndex = ++zIndex;
+    prevSlide.current = slide;
+    style.zIndex = ++zIndex.current;
     requestAnimationFrame(() => {
       setTimeout(() => {
         style.transition = `width ${transitionDuration}ms ${transitionTimingFunction}`;
@@ -253,7 +256,7 @@ const Slider = ({
     }
 
     return {};
-  }, [withSwipe, swipeMove]);
+  }, [withSwipe, swipeStart, swipeMove, swipeEnd]);
 
   return (
     // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
