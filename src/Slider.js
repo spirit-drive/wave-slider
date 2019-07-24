@@ -17,39 +17,21 @@ const Navigation = ({
   classNameButtons,
   classNameWrapperPoint,
 }) => {
-  const styleNavButton = useMemo(
-    () => ({
-      width: `${sizeNavButton}px`,
-      height: `${sizeNavButton}px`,
-    }),
-    [sizeNavButton]
-  );
-  const getStyleNavButton = useCallback(
-    i => ({
-      [navigationPosition === 'center' ? 'marginLeft' : 'marginTop']: i ? `${indentBetweenNavButtons}px` : 0,
-    }),
-    [indentBetweenNavButtons, navigationPosition]
-  );
-  const stylePoints = useMemo(
-    () => ({
-      width: `${sizePoints}px`,
-      height: `${sizePoints}px`,
-    }),
-    [sizePoints]
-  );
+  const styleNavButton = useMemo(() => ({ width: `${sizeNavButton}px`, height: `${sizeNavButton}px` }), [
+    sizeNavButton,
+  ]);
+  const margin = useMemo(() => (navigationPosition === 'center' ? 'marginLeft' : 'marginTop'), [navigationPosition]);
+  const translate = useMemo(() => (navigationPosition === 'center' ? 'translateX' : 'translateY'), [
+    navigationPosition,
+  ]);
+  const getStyleNavButton = useCallback(i => ({ [margin]: i ? `${indentBetweenNavButtons}px` : 0 }), [
+    margin,
+    indentBetweenNavButtons,
+  ]);
+  const stylePoints = useMemo(() => ({ width: `${sizePoints}px`, height: `${sizePoints}px` }), [sizePoints]);
   const getPointPosition = useCallback(
-    number => {
-      if (navigationPosition === 'center') {
-        return {
-          transform: `translateX(${(indentBetweenNavButtons + sizeNavButton) * number}px)`,
-        };
-      }
-
-      return {
-        transform: `translateY(${(indentBetweenNavButtons + sizeNavButton) * number}px)`,
-      };
-    },
-    [navigationPosition, indentBetweenNavButtons, sizeNavButton]
+    number => ({ transform: `${translate}(${(indentBetweenNavButtons + sizeNavButton) * number}px)` }),
+    [indentBetweenNavButtons, sizeNavButton, translate]
   );
   return (
     <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationPosition}`, classNameNav)}>
