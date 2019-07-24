@@ -101,6 +101,7 @@ Navigation.defaultProps = {
 
 let zIndex = 0;
 let intervalId = null;
+let clickPos = null;
 let prevSlide = -1;
 
 const Slider = ({
@@ -114,6 +115,7 @@ const Slider = ({
   isReverse,
   stopOnHover,
   autoPlay,
+  sensitivity,
   ...navProps
 }) => {
   const [slide, setSlide] = useState(initialSlide);
@@ -121,19 +123,23 @@ const Slider = ({
   const count = useMemo(() => children.length, [children]);
 
   const next = useCallback(() => {
+    stop();
     setSlide(v => {
       const increase = v + 1;
       if (increase === count) return 0;
       return increase;
     });
+    if (autoPlay) play();
   }, [count]);
 
   const back = useCallback(() => {
+    stop();
     setSlide(v => {
       const decrease = v - 1;
       if (decrease === -1) return count - 1;
       return decrease;
     });
+    if (autoPlay) play();
   }, [count]);
 
   const move = useCallback(() => {
@@ -167,6 +173,31 @@ const Slider = ({
       item.current.children[0].style.width = width;
     });
   }, [slider, slides]);
+
+  const swipeStart = useCallback(e => {
+    clickPos = e.clientX || e.touches[0].clientX;
+  }, []);
+
+  const swipeMove = useCallback(
+    e => {
+      if (clickPos === null) return;
+      const clientX = e.clientX || e.touches[0].clientX;
+      const d = clientX - clickPos;
+      if (Math.abs(d) > sensitivity) {
+        if (d < 0) {
+          next();
+        } else {
+          back();
+        }
+        clickPos = clientX;
+      }
+    },
+    [next, back]
+  );
+
+  const swipeEnd = useCallback(() => {
+    clickPos = null;
+  }, []);
 
   useEffect(() => {
     const block = slides.current[slide].current;
@@ -203,13 +234,23 @@ const Slider = ({
   }, []);
 
   return (
-    <div // eslint-disable-line jsx-a11y/mouse-events-have-key-events
+    // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+    <div
       className={cn('wave-slider', className)}
       ref={slider}
       onMouseOver={stopOnHover ? stop : null}
       onMouseOut={stopOnHover ? smartPlay : null}
     >
-      <div className="wave-slider__wrapper">
+      <div
+        role="presentation"
+        className="wave-slider__wrapper"
+        onMouseDown={swipeStart}
+        onTouchStart={swipeStart}
+        onMouseMove={swipeMove}
+        onTouchMove={swipeMove}
+        onMouseUp={swipeEnd}
+        onTouchEnd={swipeEnd}
+      >
         {children
           .map((item, i) => (
             <div
@@ -238,6 +279,7 @@ Slider.propTypes = {
   className: PropTypes.string,
   classNameNav: PropTypes.string,
   interval: PropTypes.number,
+  sensitivity: PropTypes.number,
   initialSlide: PropTypes.number,
   transitionDuration: PropTypes.number,
   transitionTimingFunction: PropTypes.string,
@@ -259,6 +301,7 @@ Slider.defaultProps = {
   className: undefined,
   classNameNav: undefined,
   interval: 1000,
+  sensitivity: 50,
   initialSlide: 0,
   transitionDuration: 800,
   transitionTimingFunction: 'ease',
