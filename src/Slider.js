@@ -97,15 +97,15 @@ const swipeEnd = () => {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'next':
-      if (state + 1 === action.count) return 0;
+      if (state + 1 === action.payload) return 0;
       return state + 1;
 
     case 'back':
-      if (state === 0) return action.count - 1;
+      if (state === 0) return action.payload - 1;
       return state - 1;
 
     default:
-      return action.count;
+      return action.payload;
   }
 };
 
@@ -126,16 +126,16 @@ const Slider = ({
   ...navProps
 }) => {
   const [slide, setSlide] = useReducer(reducer, initialSlide);
-  const toSlide = useCallback(count => () => setSlide({ count }), []);
+  const toSlide = useCallback(payload => () => setSlide({ payload }), []);
   const count = useMemo(() => children.length, [children]);
 
   const next = useCallback(() => {
-    setSlide({ type: 'next', count });
+    setSlide({ type: 'next', payload: count });
     play();
   }, [count]);
 
   const back = useCallback(() => {
-    setSlide({ type: 'back', count });
+    setSlide({ type: 'back', payload: count });
     play();
   }, [count]);
 
