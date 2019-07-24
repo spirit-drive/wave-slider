@@ -132,12 +132,12 @@ const Slider = ({
   const next = useCallback(() => {
     setSlide({ type: 'next', payload: count });
     play();
-  }, [count]);
+  }, [count]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const back = useCallback(() => {
     setSlide({ type: 'back', payload: count });
     play();
-  }, [count]);
+  }, [count]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const move = useMemo(() => (isReverse ? back : next), [isReverse, back, next]);
 
@@ -227,7 +227,7 @@ const Slider = ({
       };
     }
     return null;
-  }, [withFixedWidth]);
+  }, [withFixedWidth, setWidthForSlides]);
 
   const handlersForTotalSlider = useMemo(() => {
     if (stopOnHover) {
