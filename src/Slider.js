@@ -259,17 +259,15 @@ const Slider = ({
     // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
     <div className={cn('wave-slider', className)} ref={slider} {...handlersForTotalSlider}>
       <div role="presentation" className="wave-slider__wrapper" {...handlersForSliderWrapper}>
-        {children
-          .map((item, i) => (
-            <div
-              ref={slides.current[i]}
-              key={i} // eslint-disable-line react/no-array-index-key
-              className="wave-slider__slide"
-            >
-              {item}
-            </div>
-          ))
-          .reverse()}
+        {children.map((item, i) => (
+          <div
+            ref={slides.current[i]}
+            key={i} // eslint-disable-line react/no-array-index-key
+            className="wave-slider__slide"
+          >
+            {item}
+          </div>
+        ))}
       </div>
       {navigation && <Navigation slide={slide} count={count} toSlide={toSlide} {...navProps} />}
       <button type="button" onClick={next}>
