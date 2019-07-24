@@ -10,7 +10,7 @@ const Navigation = ({
   sizeNavButton,
   sizePoints,
   indentBetweenNavButtons,
-  navigationDirection,
+  navigationPosition,
   classNameNav,
   classNamePoints,
   classNamePoint,
@@ -26,9 +26,9 @@ const Navigation = ({
   );
   const getStyleNavButton = useCallback(
     i => ({
-      [navigationDirection === 'center' ? 'marginLeft' : 'marginTop']: i ? `${indentBetweenNavButtons}px` : 0,
+      [navigationPosition === 'center' ? 'marginLeft' : 'marginTop']: i ? `${indentBetweenNavButtons}px` : 0,
     }),
-    [indentBetweenNavButtons, navigationDirection]
+    [indentBetweenNavButtons, navigationPosition]
   );
   const stylePoints = useMemo(
     () => ({
@@ -39,7 +39,7 @@ const Navigation = ({
   );
   const getPointPosition = useCallback(
     number => {
-      if (navigationDirection === 'center') {
+      if (navigationPosition === 'center') {
         return {
           transform: `translateX(${(indentBetweenNavButtons + sizeNavButton) * number}px)`,
         };
@@ -49,10 +49,10 @@ const Navigation = ({
         transform: `translateY(${(indentBetweenNavButtons + sizeNavButton) * number}px)`,
       };
     },
-    [navigationDirection, indentBetweenNavButtons, sizeNavButton]
+    [navigationPosition, indentBetweenNavButtons, sizeNavButton]
   );
   return (
-    <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationDirection}`, classNameNav)}>
+    <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationPosition}`, classNameNav)}>
       <div
         className={cn('wave-slider-nav__point-wrapper', classNameWrapperPoint)}
         style={{ ...styleNavButton, ...getPointPosition(slide) }}
@@ -80,7 +80,7 @@ Navigation.propTypes = {
   count: PropTypes.number.isRequired,
   slide: PropTypes.number.isRequired,
   toSlide: PropTypes.func.isRequired,
-  navigationDirection: PropTypes.oneOf(['center', 'left', 'right']).isRequired,
+  navigationPosition: PropTypes.oneOf(['center', 'left', 'right']).isRequired,
   sizeNavButton: PropTypes.number.isRequired,
   sizePoints: PropTypes.number.isRequired,
   indentBetweenNavButtons: PropTypes.number.isRequired,
@@ -226,7 +226,7 @@ Slider.propTypes = {
   navigation: PropTypes.bool,
   isReverse: PropTypes.bool,
   stopOnHover: PropTypes.bool,
-  navigationDirection: PropTypes.oneOf(['center', 'left', 'right']),
+  navigationPosition: PropTypes.oneOf(['center', 'left', 'right']),
   sizeNavButton: PropTypes.number,
   sizePoints: PropTypes.number,
   indentBetweenNavButtons: PropTypes.number,
@@ -246,7 +246,7 @@ Slider.defaultProps = {
   navigation: true,
   isReverse: false,
   stopOnHover: true,
-  navigationDirection: 'right',
+  navigationPosition: 'right',
   sizeNavButton: 35,
   indentBetweenNavButtons: 30,
   sizePoints: 10,
