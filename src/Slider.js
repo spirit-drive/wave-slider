@@ -3,26 +3,6 @@ import PropTypes from 'prop-types';
 import cn from 'classnames';
 import './Slider.css';
 
-const navigationDirections = {
-  center: {
-    left: '50%',
-    bottom: '50px',
-    transform: 'translateX(-50%)',
-  },
-  left: {
-    top: '50%',
-    left: '50px',
-    transform: 'translateY(-50%)',
-    flexDirection: 'column',
-  },
-  right: {
-    top: '50%',
-    right: '50px',
-    transform: 'translateY(-50%)',
-    flexDirection: 'column',
-  },
-};
-
 const Navigation = ({
   count,
   toSlide,
@@ -55,7 +35,6 @@ const Navigation = ({
     }),
     [shiftPoint]
   );
-  const styleNav = useMemo(() => navigationDirections[navigationDirection], [navigationDirection]);
   const getPointPosition = useCallback(
     number => {
       if (navigationDirection === 'center') {
@@ -71,7 +50,7 @@ const Navigation = ({
     [navigationDirection, sizeNavButton, indentBetweenNavButtons, sizePoints]
   );
   return (
-    <div className="wave-slider-nav" style={styleNav}>
+    <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationDirection}`)}>
       <div className="wave-slider-nav__point" style={{ ...stylePoints, ...stylePoint, ...getPointPosition(slide) }} />
       {Array(count)
         .fill()
@@ -101,26 +80,16 @@ Navigation.propTypes = {
 
 let zIndex = 0;
 
-const Slider = ({
-  className,
-  height,
-  speedAnimation,
-  typeAnimation,
-  children,
-  initialSlide,
-  navigation,
-  ...navProps
-}) => {
+const Slider = ({ className, speedAnimation, typeAnimation, children, initialSlide, navigation, ...navProps }) => {
   const [slide, setSlide] = useState(initialSlide);
   const toSlide = useCallback(number => () => setSlide(number), []);
-  const style = useMemo(() => ({ height: `${height}px`, transition: `height ${speedAnimation}ms ${typeAnimation}` }), [
-    height,
+  const style = useMemo(() => ({ transition: `width ${speedAnimation}ms ${typeAnimation}` }), [
     speedAnimation,
     typeAnimation,
   ]);
   return (
-    <div style={style} className={cn('wave-slider', className)}>
-      <div className="wave-slider__wrapper">
+    <div className={cn('wave-slider', className)}>
+      <div style={style} className="wave-slider__wrapper">
         {children
           .map((item, i) => (
             <div style={i === slide ? { zIndex: ++zIndex } : null} className="wave-slider__slide">
@@ -139,7 +108,6 @@ Slider.propTypes = {
   className: PropTypes.string,
   interval: PropTypes.number,
   initialSlide: PropTypes.number,
-  height: PropTypes.number,
   speedAnimation: PropTypes.number,
   typeAnimation: PropTypes.string,
   navigation: PropTypes.bool,
@@ -153,7 +121,6 @@ Slider.defaultProps = {
   className: undefined,
   interval: 5000,
   initialSlide: 0,
-  height: 500,
   speedAnimation: 300,
   typeAnimation: 'ease',
   navigation: true,

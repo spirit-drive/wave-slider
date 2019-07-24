@@ -1,5 +1,6 @@
 .wave-slider {
   position: relative;
+  height: 500px;
   z-index: 0;
 }
 
@@ -25,6 +26,26 @@
   display: flex;
   font-size: 0;
   z-index: 1;
+}
+
+.wave-slider-nav_center {
+  left: 50%;
+  bottom: 50px;
+  transform: translateX(-50%);
+}
+
+.wave-slider-nav_right {
+  top: 50%;
+  right: 50px;
+  transform: translateY(-50%);
+  flex-direction: column;
+}
+
+.wave-slider-nav_left {
+  top: 50%;
+  left: 50px;
+  transform: translateY(-50%);
+  flex-direction: column;
 }
 
 .wave-slider-nav__item {
