@@ -64,9 +64,15 @@
   border: 1px solid #fff;
 }
 
+.wave-slider-nav__item_active .wave-slider-nav__points {
+  opacity: 0;
+}
+
 .wave-slider-nav__points {
+  opacity: 1;
   border-radius: 100%;
   background-color: #fff;
+  transition: all 0.3s;
 }
 
 .wave-slider-nav__point {
