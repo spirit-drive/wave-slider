@@ -86,12 +86,20 @@ Navigation.defaultProps = {
 
 let zIndex = 0;
 
-const Slider = ({ className, speedAnimation, typeAnimation, children, initialSlide, navigation, ...navProps }) => {
+const Slider = ({
+  className,
+  transitionDuration,
+  transitionTimingFunction,
+  children,
+  initialSlide,
+  navigation,
+  ...navProps
+}) => {
   const [slide, setSlide] = useState(initialSlide);
   const toSlide = useCallback(number => () => setSlide(number), []);
-  const style = useMemo(() => ({ transition: `width ${speedAnimation}ms ${typeAnimation}` }), [
-    speedAnimation,
-    typeAnimation,
+  const style = useMemo(() => ({ transition: `width ${transitionDuration}ms ${transitionTimingFunction}` }), [
+    transitionDuration,
+    transitionTimingFunction,
   ]);
   return (
     <div className={cn('wave-slider', className)}>
@@ -115,8 +123,8 @@ Slider.propTypes = {
   classNameNav: PropTypes.string,
   interval: PropTypes.number,
   initialSlide: PropTypes.number,
-  speedAnimation: PropTypes.number,
-  typeAnimation: PropTypes.string,
+  transitionDuration: PropTypes.number,
+  transitionTimingFunction: PropTypes.string,
   navigation: PropTypes.bool,
   navigationDirection: PropTypes.oneOf(['center', 'left', 'right']),
   sizeNavButton: PropTypes.number,
@@ -129,8 +137,8 @@ Slider.defaultProps = {
   classNameNav: undefined,
   interval: 5000,
   initialSlide: 0,
-  speedAnimation: 300,
-  typeAnimation: 'ease',
+  transitionDuration: 300,
+  transitionTimingFunction: 'ease',
   navigation: true,
   navigationDirection: 'left',
   sizeNavButton: 30,
