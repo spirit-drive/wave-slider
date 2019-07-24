@@ -208,8 +208,10 @@ const Slider = ({
     prevSlide = slide;
     style.zIndex = ++zIndex;
     requestAnimationFrame(() => {
-      style.transition = `width ${transitionDuration}ms ${transitionTimingFunction}`;
-      style.width = '100%';
+      setTimeout(() => {
+        style.transition = `width ${transitionDuration}ms ${transitionTimingFunction}`;
+        style.width = '100%';
+      }, 50);
     });
   }, [slide, transitionDuration, transitionTimingFunction]);
 
