@@ -86,6 +86,7 @@ Navigation.defaultProps = {
 
 let zIndex = 0;
 let intervalId = null;
+let prevSlide = -1;
 
 const Slider = ({
   className,
@@ -133,12 +134,8 @@ const Slider = ({
 
   const stop = useCallback(() => {
     clearInterval(intervalId);
+    intervalId = null;
   }, []);
-
-  useEffect(() => {
-    play();
-    return stop;
-  }, [play, stop]);
 
   const slides = useRef(children.map(() => React.createRef()));
   const slider = useRef(null);
@@ -147,28 +144,37 @@ const Slider = ({
     const block = slides.current[slide].current;
     block.style.transition = 'none';
     block.style.width = '0%';
+    if (prevSlide > slide) {
+      block.style.left = 'auto';
+      block.style.right = 0;
+      block.children[0].style.float = 'right';
+    }
+    prevSlide = slide;
     block.style.zIndex = ++zIndex;
     requestAnimationFrame(() => {
       block.style.transition = `width ${transitionDuration}ms ${transitionTimingFunction}`;
       block.style.width = '100%';
     });
-  }, [slide]);
+  }, [slide, transitionDuration, transitionTimingFunction]);
 
   useEffect(() => {
+    play();
     slides.current.forEach(item => {
       const { width } = getComputedStyle(slider.current);
       // eslint-disable-next-line no-param-reassign
       item.current.children[0].style.width = width;
     });
+    return stop;
   }, []);
 
   return (
-    <div className={cn('wave-slider', className)} ref={slider}>
-      <div // eslint-disable-line jsx-a11y/mouse-events-have-key-events
-        className="wave-slider__wrapper"
-        onMouseOver={stopOnHover ? stop : null}
-        onMouseOut={stopOnHover ? play : null}
-      >
+    <div // eslint-disable-line jsx-a11y/mouse-events-have-key-events
+      className={cn('wave-slider', className)}
+      ref={slider}
+      onMouseOver={stopOnHover ? stop : null}
+      onMouseOut={stopOnHover ? play : null}
+    >
+      <div className="wave-slider__wrapper">
         {children
           .map((item, i) => (
             <div
@@ -187,12 +193,6 @@ const Slider = ({
       </button>
       <button type="button" onClick={back}>
         back
-      </button>
-      <button type="button" onClick={play}>
-        play
-      </button>
-      <button type="button" onClick={stop}>
-        stop
       </button>
     </div>
   );
@@ -218,12 +218,12 @@ Slider.propTypes = {
 Slider.defaultProps = {
   className: undefined,
   classNameNav: undefined,
-  interval: 3000,
+  interval: 1000,
   initialSlide: 0,
-  transitionDuration: 300,
+  transitionDuration: 800,
   transitionTimingFunction: 'ease',
   navigation: true,
-  isReverse: true,
+  isReverse: false,
   stopOnHover: true,
   navigationDirection: 'right',
   sizeNavButton: 35,
