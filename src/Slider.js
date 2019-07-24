@@ -96,6 +96,7 @@ const Slider = ({
   navigation,
   interval,
   isReverse,
+  stopOnHover,
   ...navProps
 }) => {
   const [slide, setSlide] = useState(initialSlide);
@@ -144,7 +145,12 @@ const Slider = ({
   }, [play, stop]);
 
   return (
-    <div className={cn('wave-slider', className)}>
+    // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+    <div
+      className={cn('wave-slider', className)}
+      onMouseOver={stopOnHover ? stop : null}
+      onMouseOut={stopOnHover ? play : null}
+    >
       <div style={style} className="wave-slider__wrapper">
         {children
           .map((item, i) => (
@@ -182,6 +188,7 @@ Slider.propTypes = {
   transitionTimingFunction: PropTypes.string,
   navigation: PropTypes.bool,
   isReverse: PropTypes.bool,
+  stopOnHover: PropTypes.bool,
   navigationDirection: PropTypes.oneOf(['center', 'left', 'right']),
   sizeNavButton: PropTypes.number,
   sizePoints: PropTypes.number,
@@ -197,6 +204,7 @@ Slider.defaultProps = {
   transitionTimingFunction: 'ease',
   navigation: true,
   isReverse: true,
+  stopOnHover: true,
   navigationDirection: 'right',
   sizeNavButton: 35,
   indentBetweenNavButtons: 30,
