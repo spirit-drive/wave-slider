@@ -181,16 +181,19 @@ const Slider = ({
   );
 
   useEffect(() => {
-    const block = slides.current[slide].current;
-    const { style } = block;
+    const {
+      style,
+      children: [child],
+    } = slides.current[slide].current;
+
     style.transition = 'none';
     style.width = '0%';
     if (prevSlide > slide) {
       style.left = 'auto';
-      block.children[0].style.float = 'right';
+      child.style.float = 'right';
     } else {
       style.left = 0;
-      block.children[0].style.float = 'none';
+      child.style.float = 'none';
     }
     prevSlide = slide;
     style.zIndex = ++zIndex;
