@@ -226,7 +226,7 @@ const Slider = ({
         window.removeEventListener('resize', setWidthForSlides);
       };
     }
-    return null;
+    return undefined;
   }, [withFixedWidth, setWidthForSlides]);
 
   const handlersForTotalSlider = useMemo(() => {
@@ -308,7 +308,7 @@ Slider.propTypes = {
 Slider.defaultProps = {
   className: undefined,
   classNameNav: undefined,
-  interval: 3000,
+  interval: 1000,
   offsetForSwipeStep: 50,
   initialSlide: 0,
   transitionDuration: 800,
