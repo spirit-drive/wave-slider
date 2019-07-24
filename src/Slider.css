@@ -76,8 +76,14 @@
 }
 
 .wave-slider-nav__point {
-  position: absolute;
   border-radius: 100%;
-  transition: all 300ms;
   background-color: #000;
+}
+
+.wave-slider-nav__point-wrapper {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 300ms;
 }

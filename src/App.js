@@ -5,9 +5,15 @@ import './App.css';
 const App = () => (
   <div className="App">
     <Slider>
-      <div className="slide" style={{ backgroundColor: 'red' }} />
-      <div className="slide" style={{ backgroundColor: 'yellow' }} />
-      <div className="slide" style={{ backgroundColor: 'blue' }} />
+      <div className="slide" style={{ backgroundColor: '#ccc' }}>
+        1
+      </div>
+      <div className="slide" style={{ backgroundColor: '#ccc' }}>
+        2
+      </div>
+      <div className="slide" style={{ backgroundColor: '#ccc' }}>
+        3
+      </div>
     </Slider>
   </div>
 );

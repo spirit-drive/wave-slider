@@ -13,10 +13,15 @@ const Navigation = ({
   navigationDirection,
   classNameNav,
 }) => {
-  const getStyleNavButton = useCallback(
-    i => ({
+  const styleNavButton = useMemo(
+    () => ({
       width: `${sizeNavButton}px`,
       height: `${sizeNavButton}px`,
+    }),
+    [sizeNavButton]
+  );
+  const getStyleNavButton = useCallback(
+    i => ({
       [navigationDirection === 'center' ? 'marginLeft' : 'marginTop']: i ? `${indentBetweenNavButtons}px` : 0,
     }),
     [sizeNavButton, indentBetweenNavButtons, navigationDirection]
@@ -28,31 +33,25 @@ const Navigation = ({
     }),
     [sizePoints]
   );
-  const shiftPoint = useMemo(() => (sizeNavButton - sizePoints) / 2, [sizePoints, sizeNavButton]);
-  const stylePoint = useMemo(
-    () => ({
-      top: `${shiftPoint}px`,
-      left: `${shiftPoint}px`,
-    }),
-    [shiftPoint]
-  );
   const getPointPosition = useCallback(
     number => {
       if (navigationDirection === 'center') {
         return {
-          transform: `translateX(${(shiftPoint + indentBetweenNavButtons * 2) * number}px)`,
+          transform: `translateX(${(indentBetweenNavButtons + sizeNavButton) * number}px)`,
         };
       }
 
       return {
-        transform: `translateY(${(shiftPoint + indentBetweenNavButtons * 2) * number}px)`,
+        transform: `translateY(${(indentBetweenNavButtons + sizeNavButton) * number}px)`,
       };
     },
-    [navigationDirection, sizeNavButton, indentBetweenNavButtons, sizePoints]
+    [navigationDirection, indentBetweenNavButtons, sizeNavButton]
   );
   return (
     <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationDirection}`, classNameNav)}>
-      <div className="wave-slider-nav__point" style={{ ...stylePoints, ...stylePoint, ...getPointPosition(slide) }} />
+      <div className="wave-slider-nav__point-wrapper" style={{ ...styleNavButton, ...getPointPosition(slide) }}>
+        <div className="wave-slider-nav__point" style={stylePoints} />
+      </div>
       {Array(count)
         .fill()
         .map((_, i) => (
@@ -60,7 +59,7 @@ const Navigation = ({
             className={cn('wave-slider-nav__item', i === slide && 'wave-slider-nav__item_active')}
             type="button"
             onClick={toSlide(i)}
-            style={getStyleNavButton(i)}
+            style={{ ...styleNavButton, ...getStyleNavButton(i) }}
           >
             <span className="wave-slider-nav__points" style={stylePoints} />
           </button>
@@ -101,6 +100,25 @@ const Slider = ({
     transitionDuration,
     transitionTimingFunction,
   ]);
+  const count = useMemo(() => children.length, [children]);
+  const next = useCallback(
+    () =>
+      setSlide(v => {
+        const increase = v + 1;
+        if (increase === count) return 0;
+        return increase;
+      }),
+    [count]
+  );
+  const back = useCallback(
+    () =>
+      setSlide(v => {
+        const decrease = v - 1;
+        if (decrease === -1) return count - 1;
+        return decrease;
+      }),
+    [count]
+  );
   return (
     <div className={cn('wave-slider', className)}>
       <div style={style} className="wave-slider__wrapper">
@@ -112,7 +130,13 @@ const Slider = ({
           ))
           .reverse()}
       </div>
-      {navigation && <Navigation slide={slide} count={children.length} toSlide={toSlide} {...navProps} />}
+      {navigation && <Navigation slide={slide} count={count} toSlide={toSlide} {...navProps} />}
+      <button type="button" onClick={next}>
+        next
+      </button>
+      <button type="button" onClick={back}>
+        back
+      </button>
     </div>
   );
 };
@@ -140,9 +164,9 @@ Slider.defaultProps = {
   transitionDuration: 300,
   transitionTimingFunction: 'ease',
   navigation: true,
-  navigationDirection: 'left',
-  sizeNavButton: 30,
-  indentBetweenNavButtons: 20,
+  navigationDirection: 'right',
+  sizeNavButton: 35,
+  indentBetweenNavButtons: 30,
   sizePoints: 10,
 };
 
