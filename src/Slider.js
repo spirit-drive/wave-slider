@@ -163,11 +163,8 @@ const Slider = ({
             const clientX = e.clientX || e.touches[0].clientX;
             const d = clientX - clickPos;
             if (Math.abs(d) > sensitivity) {
-              if (d > 0) {
-                next();
-              } else {
-                back();
-              }
+              if (d > 0) next();
+              else back();
               clickPos = clientX;
             }
           }
