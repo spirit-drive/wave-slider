@@ -12,6 +12,10 @@ const Navigation = ({
   indentBetweenNavButtons,
   navigationDirection,
   classNameNav,
+  classNamePoints,
+  classNamePoint,
+  classNameButtons,
+  classNameWrapperPoint,
 }) => {
   const styleNavButton = useMemo(
     () => ({
@@ -49,20 +53,23 @@ const Navigation = ({
   );
   return (
     <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationDirection}`, classNameNav)}>
-      <div className="wave-slider-nav__point-wrapper" style={{ ...styleNavButton, ...getPointPosition(slide) }}>
-        <div className="wave-slider-nav__point" style={stylePoints} />
+      <div
+        className={cn('wave-slider-nav__point-wrapper', classNameWrapperPoint)}
+        style={{ ...styleNavButton, ...getPointPosition(slide) }}
+      >
+        <div className={cn('wave-slider-nav__point', classNamePoints, classNamePoint)} style={stylePoints} />
       </div>
       {Array(count)
         .fill()
         .map((_, i) => (
           <button
             key={i} // eslint-disable-line react/no-array-index-key
-            className={cn('wave-slider-nav__item', i === slide && 'wave-slider-nav__item_active')}
+            className={cn('wave-slider-nav__item', i === slide && 'wave-slider-nav__item_active', classNameButtons)}
             type="button"
             onClick={toSlide(i)}
             style={{ ...styleNavButton, ...getStyleNavButton(i) }}
           >
-            <span className="wave-slider-nav__points" style={stylePoints} />
+            <span className={cn('wave-slider-nav__points', classNamePoints)} style={stylePoints} />
           </button>
         ))}
     </div>
@@ -78,10 +85,18 @@ Navigation.propTypes = {
   sizePoints: PropTypes.number.isRequired,
   indentBetweenNavButtons: PropTypes.number.isRequired,
   classNameNav: PropTypes.string,
+  classNamePoints: PropTypes.string,
+  classNamePoint: PropTypes.string,
+  classNameButtons: PropTypes.string,
+  classNameWrapperPoint: PropTypes.string,
 };
 
 Navigation.defaultProps = {
   classNameNav: undefined,
+  classNamePoints: undefined,
+  classNamePoint: undefined,
+  classNameButtons: undefined,
+  classNameWrapperPoint: undefined,
 };
 
 let zIndex = 0;
@@ -215,6 +230,10 @@ Slider.propTypes = {
   sizeNavButton: PropTypes.number,
   sizePoints: PropTypes.number,
   indentBetweenNavButtons: PropTypes.number,
+  classNamePoints: PropTypes.string,
+  classNamePoint: PropTypes.string,
+  classNameButtons: PropTypes.string,
+  classNameWrapperPoint: PropTypes.string,
 };
 
 Slider.defaultProps = {
@@ -231,6 +250,10 @@ Slider.defaultProps = {
   sizeNavButton: 35,
   indentBetweenNavButtons: 30,
   sizePoints: 10,
+  classNamePoints: undefined,
+  classNamePoint: undefined,
+  classNameButtons: undefined,
+  classNameWrapperPoint: undefined,
 };
 
 export default Slider;
