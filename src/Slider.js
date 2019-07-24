@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import './Slider.css';
@@ -24,7 +24,7 @@ const Navigation = ({
     i => ({
       [navigationDirection === 'center' ? 'marginLeft' : 'marginTop']: i ? `${indentBetweenNavButtons}px` : 0,
     }),
-    [sizeNavButton, indentBetweenNavButtons, navigationDirection]
+    [indentBetweenNavButtons, navigationDirection]
   );
   const stylePoints = useMemo(
     () => ({
@@ -56,6 +56,7 @@ const Navigation = ({
         .fill()
         .map((_, i) => (
           <button
+            key={i} // eslint-disable-line react/no-array-index-key
             className={cn('wave-slider-nav__item', i === slide && 'wave-slider-nav__item_active')}
             type="button"
             onClick={toSlide(i)}
@@ -84,6 +85,7 @@ Navigation.defaultProps = {
 };
 
 let zIndex = 0;
+let intervalId = null;
 
 const Slider = ({
   className,
@@ -92,6 +94,8 @@ const Slider = ({
   children,
   initialSlide,
   navigation,
+  interval,
+  isReverse,
   ...navProps
 }) => {
   const [slide, setSlide] = useState(initialSlide);
@@ -101,30 +105,51 @@ const Slider = ({
     transitionTimingFunction,
   ]);
   const count = useMemo(() => children.length, [children]);
-  const next = useCallback(
-    () =>
-      setSlide(v => {
-        const increase = v + 1;
-        if (increase === count) return 0;
-        return increase;
-      }),
-    [count]
-  );
-  const back = useCallback(
-    () =>
-      setSlide(v => {
-        const decrease = v - 1;
-        if (decrease === -1) return count - 1;
-        return decrease;
-      }),
-    [count]
-  );
+
+  const next = useCallback(() => {
+    setSlide(v => {
+      const increase = v + 1;
+      if (increase === count) return 0;
+      return increase;
+    });
+  }, [count]);
+
+  const back = useCallback(() => {
+    setSlide(v => {
+      const decrease = v - 1;
+      if (decrease === -1) return count - 1;
+      return decrease;
+    });
+  }, [count]);
+
+  const move = useCallback(() => {
+    if (isReverse) {
+      return back();
+    }
+
+    return next();
+  }, [isReverse, back, next]);
+
+  const play = useCallback(() => {
+    intervalId = setInterval(move, interval);
+  }, [interval, move]);
+
+  const stop = useCallback(() => {
+    clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    play();
+    return stop;
+  }, [play, stop]);
+
   return (
     <div className={cn('wave-slider', className)}>
       <div style={style} className="wave-slider__wrapper">
         {children
           .map((item, i) => (
-            <div style={i === slide ? { zIndex: ++zIndex } : null} className="wave-slider__slide">
+            // eslint-disable-next-line react/no-array-index-key
+            <div key={i} style={i === slide ? { zIndex: ++zIndex } : null} className="wave-slider__slide">
               {item}
             </div>
           ))
@@ -136,6 +161,12 @@ const Slider = ({
       </button>
       <button type="button" onClick={back}>
         back
+      </button>
+      <button type="button" onClick={play}>
+        play
+      </button>
+      <button type="button" onClick={stop}>
+        stop
       </button>
     </div>
   );
@@ -150,6 +181,7 @@ Slider.propTypes = {
   transitionDuration: PropTypes.number,
   transitionTimingFunction: PropTypes.string,
   navigation: PropTypes.bool,
+  isReverse: PropTypes.bool,
   navigationDirection: PropTypes.oneOf(['center', 'left', 'right']),
   sizeNavButton: PropTypes.number,
   sizePoints: PropTypes.number,
@@ -159,11 +191,12 @@ Slider.propTypes = {
 Slider.defaultProps = {
   className: undefined,
   classNameNav: undefined,
-  interval: 5000,
+  interval: 500,
   initialSlide: 0,
   transitionDuration: 300,
   transitionTimingFunction: 'ease',
   navigation: true,
+  isReverse: true,
   navigationDirection: 'right',
   sizeNavButton: 35,
   indentBetweenNavButtons: 30,
