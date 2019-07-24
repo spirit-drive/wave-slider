@@ -14,13 +14,13 @@ const App = () => (
       <div className="slide" style={{ backgroundColor: '#ccf' }}>
         3
       </div>
-      <div className="slide" style={{ backgroundColor: '#fcc' }}>
+      <div className="slide" style={{ backgroundColor: '#fec' }}>
         4
       </div>
-      <div className="slide" style={{ backgroundColor: '#cfc' }}>
+      <div className="slide" style={{ backgroundColor: '#cfe' }}>
         5
       </div>
-      <div className="slide" style={{ backgroundColor: '#ccf' }}>
+      <div className="slide" style={{ backgroundColor: '#cef' }}>
         6
       </div>
     </Slider>
