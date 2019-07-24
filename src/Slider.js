@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import './Slider.css';
@@ -101,10 +101,6 @@ const Slider = ({
 }) => {
   const [slide, setSlide] = useState(initialSlide);
   const toSlide = useCallback(number => () => setSlide(number), []);
-  const style = useMemo(() => ({ transition: `width ${transitionDuration}ms ${transitionTimingFunction}` }), [
-    transitionDuration,
-    transitionTimingFunction,
-  ]);
   const count = useMemo(() => children.length, [children]);
 
   const next = useCallback(() => {
@@ -144,18 +140,42 @@ const Slider = ({
     return stop;
   }, [play, stop]);
 
+  const slides = useRef(children.map(() => React.createRef()));
+  const slider = useRef(null);
+
+  useEffect(() => {
+    const block = slides.current[slide].current;
+    block.style.transition = 'none';
+    block.style.width = '0%';
+    block.style.zIndex = ++zIndex;
+    requestAnimationFrame(() => {
+      block.style.transition = `width ${transitionDuration}ms ${transitionTimingFunction}`;
+      block.style.width = '100%';
+    });
+  }, [slide]);
+
+  useEffect(() => {
+    slides.current.forEach(item => {
+      const { width } = getComputedStyle(slider.current);
+      // eslint-disable-next-line no-param-reassign
+      item.current.children[0].style.width = width;
+    });
+  }, []);
+
   return (
-    // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-    <div
-      className={cn('wave-slider', className)}
-      onMouseOver={stopOnHover ? stop : null}
-      onMouseOut={stopOnHover ? play : null}
-    >
-      <div style={style} className="wave-slider__wrapper">
+    <div className={cn('wave-slider', className)} ref={slider}>
+      <div // eslint-disable-line jsx-a11y/mouse-events-have-key-events
+        className="wave-slider__wrapper"
+        onMouseOver={stopOnHover ? stop : null}
+        onMouseOut={stopOnHover ? play : null}
+      >
         {children
           .map((item, i) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <div key={i} style={i === slide ? { zIndex: ++zIndex } : null} className="wave-slider__slide">
+            <div
+              ref={slides.current[i]}
+              key={i} // eslint-disable-line react/no-array-index-key
+              className="wave-slider__slide"
+            >
               {item}
             </div>
           ))
@@ -198,7 +218,7 @@ Slider.propTypes = {
 Slider.defaultProps = {
   className: undefined,
   classNameNav: undefined,
-  interval: 500,
+  interval: 3000,
   initialSlide: 0,
   transitionDuration: 300,
   transitionTimingFunction: 'ease',

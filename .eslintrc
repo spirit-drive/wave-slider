@@ -5,6 +5,8 @@
   "env": { "jest": true },
   "globals": {
     "document": true,
+    "requestAnimationFrame": true,
+    "getComputedStyle": true,
     "window": true
   },
   "rules": {
