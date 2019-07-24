@@ -48,7 +48,7 @@ const Navigation = ({
             key={i} // eslint-disable-line react/no-array-index-key
             className={cn('wave-slider-nav__item', i === slide && 'wave-slider-nav__item_active', classNameButtons)}
             type="button"
-            onClick={toSlide({ count: i })}
+            onClick={toSlide(i)}
             style={{ ...styleNavButton, ...getStyleNavButton(i) }}
           >
             <span className={cn('wave-slider-nav__points', classNamePoints)} style={stylePoints} />
@@ -126,7 +126,7 @@ const Slider = ({
   ...navProps
 }) => {
   const [slide, setSlide] = useReducer(reducer, initialSlide);
-  const toSlide = useCallback(number => () => setSlide(number), []);
+  const toSlide = useCallback(count => () => setSlide({ count }), []);
   const count = useMemo(() => children.length, [children]);
 
   const next = useCallback(() => {
