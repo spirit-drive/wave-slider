@@ -163,7 +163,7 @@ const Slider = ({
             const clientX = e.clientX || e.touches[0].clientX;
             const d = clientX - clickPos;
             if (Math.abs(d) > sensitivity) {
-              if (d < 0) {
+              if (d > 0) {
                 next();
               } else {
                 back();
@@ -302,7 +302,7 @@ Slider.defaultProps = {
   autoPlay: true,
   isReverse: false,
   stopOnHover: true,
-  navigationPosition: 'right',
+  navigationPosition: 'center',
   sizeNavButton: 35,
   indentBetweenNavButtons: 15,
   sizePoints: 10,
