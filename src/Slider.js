@@ -113,6 +113,7 @@ const Slider = ({
   interval,
   isReverse,
   stopOnHover,
+  autoPlay,
   ...navProps
 }) => {
   const [slide, setSlide] = useState(initialSlide);
@@ -143,17 +144,29 @@ const Slider = ({
     return next();
   }, [isReverse, back, next]);
 
-  const play = useCallback(() => {
-    intervalId = setInterval(move, interval);
-  }, [interval, move]);
-
   const stop = useCallback(() => {
     clearInterval(intervalId);
     intervalId = null;
   }, []);
 
+  const play = useCallback(() => {
+    stop();
+    intervalId = setInterval(move, interval);
+  }, [interval, move, stop]);
+
+  const smartPlay = useCallback(() => {
+    if (autoPlay) play();
+  }, [autoPlay, play]);
+
   const slides = useRef(children.map(() => React.createRef()));
   const slider = useRef(null);
+  const setWidthForSlides = useCallback(() => {
+    slides.current.forEach(item => {
+      const { width } = getComputedStyle(slider.current);
+      // eslint-disable-next-line no-param-reassign
+      item.current.children[0].style.width = width;
+    });
+  }, [slider, slides]);
 
   useEffect(() => {
     const block = slides.current[slide].current;
@@ -175,13 +188,18 @@ const Slider = ({
   }, [slide, transitionDuration, transitionTimingFunction]);
 
   useEffect(() => {
-    play();
-    slides.current.forEach(item => {
-      const { width } = getComputedStyle(slider.current);
-      // eslint-disable-next-line no-param-reassign
-      item.current.children[0].style.width = width;
-    });
-    return stop;
+    smartPlay();
+    setWidthForSlides();
+    window.addEventListener('resize', setWidthForSlides);
+    window.addEventListener('focus', smartPlay);
+    window.addEventListener('blur', stop);
+
+    return () => {
+      stop();
+      window.removeEventListener('resize', setWidthForSlides);
+      window.removeEventListener('focus', smartPlay);
+      window.removeEventListener('blur', stop);
+    };
   }, []);
 
   return (
@@ -189,7 +207,7 @@ const Slider = ({
       className={cn('wave-slider', className)}
       ref={slider}
       onMouseOver={stopOnHover ? stop : null}
-      onMouseOut={stopOnHover ? play : null}
+      onMouseOut={stopOnHover ? smartPlay : null}
     >
       <div className="wave-slider__wrapper">
         {children
@@ -224,6 +242,7 @@ Slider.propTypes = {
   transitionDuration: PropTypes.number,
   transitionTimingFunction: PropTypes.string,
   navigation: PropTypes.bool,
+  autoPlay: PropTypes.bool,
   isReverse: PropTypes.bool,
   stopOnHover: PropTypes.bool,
   navigationPosition: PropTypes.oneOf(['center', 'left', 'right']),
@@ -244,6 +263,7 @@ Slider.defaultProps = {
   transitionDuration: 800,
   transitionTimingFunction: 'ease',
   navigation: true,
+  autoPlay: true,
   isReverse: false,
   stopOnHover: true,
   navigationPosition: 'right',
