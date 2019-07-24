@@ -146,8 +146,10 @@ const Slider = ({
     block.style.width = '0%';
     if (prevSlide > slide) {
       block.style.left = 'auto';
-      block.style.right = 0;
       block.children[0].style.float = 'right';
+    } else {
+      block.style.left = 0;
+      block.children[0].style.float = 'none';
     }
     prevSlide = slide;
     block.style.zIndex = ++zIndex;
