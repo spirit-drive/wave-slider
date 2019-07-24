@@ -132,118 +132,112 @@ const Slider = ({
   const count = useMemo(() => children.length, [children]);
 
   const next = useCallback(() => {
-    stop();
     setSlide(v => {
       const increase = v + 1;
       if (increase === count) return 0;
       return increase;
     });
-    smartPlay();
+    play();
   }, [count]);
 
   const back = useCallback(() => {
-    stop();
     setSlide(v => {
       const decrease = v - 1;
       if (decrease === -1) return count - 1;
       return decrease;
     });
-    smartPlay();
+    play();
   }, [count]);
 
-  const move = useCallback(() => {
-    if (isReverse) {
-      return back();
-    }
+  const move = useMemo(() => (isReverse ? back : next), [isReverse, back, next]);
 
-    return next();
-  }, [isReverse, back, next]);
+  const stop = useMemo(() => (autoPlay ? () => clearTimeout(intervalId) : () => {}), [autoPlay]);
 
-  const stop = useCallback(() => {
-    clearInterval(intervalId);
-    intervalId = null;
-  }, []);
-
-  const play = useCallback(() => {
-    stop();
-    intervalId = setInterval(move, interval);
-  }, [interval, move, stop]);
-
-  const smartPlay = useCallback(() => {
-    if (autoPlay) play();
-  }, [autoPlay, play]);
+  const play = useMemo(
+    () =>
+      autoPlay
+        ? () => {
+            stop();
+            intervalId = setTimeout(move, interval);
+          }
+        : () => {},
+    [autoPlay, interval, move, stop]
+  );
 
   const slides = useRef(children.map(() => React.createRef()));
   const slider = useRef(null);
+
   const setWidthForSlides = useCallback(() => {
-    slides.current.forEach(item => {
-      const { width } = getComputedStyle(slider.current);
-      // eslint-disable-next-line no-param-reassign
-      item.current.children[0].style.width = width;
-    });
+    const { width } = getComputedStyle(slider.current);
+    // eslint-disable-next-line no-param-reassign,no-return-assign
+    slides.current.forEach(item => (item.current.children[0].style.width = width));
   }, [slider, slides]);
 
-  const swipeMove = useCallback(
-    e => {
-      if (clickPos === null) return;
-      const clientX = e.clientX || e.touches[0].clientX;
-      const d = clientX - clickPos;
-      if (Math.abs(d) > sensitivity) {
-        if (d < 0) {
-          next();
-        } else {
-          back();
-        }
-        clickPos = clientX;
-      }
-    },
-    [next, back, sensitivity]
+  const swipeMove = useMemo(
+    () =>
+      withSwipe
+        ? e => {
+            if (clickPos === null) return;
+            const clientX = e.clientX || e.touches[0].clientX;
+            const d = clientX - clickPos;
+            if (Math.abs(d) > sensitivity) {
+              if (d < 0) {
+                next();
+              } else {
+                back();
+              }
+              clickPos = clientX;
+            }
+          }
+        : () => {},
+    [withSwipe, next, back, sensitivity]
   );
 
   useEffect(() => {
     const block = slides.current[slide].current;
-    block.style.transition = 'none';
-    block.style.width = '0%';
+    const { style } = block;
+    style.transition = 'none';
+    style.width = '0%';
     if (prevSlide > slide) {
-      block.style.left = 'auto';
+      style.left = 'auto';
       block.children[0].style.float = 'right';
     } else {
-      block.style.left = 0;
+      style.left = 0;
       block.children[0].style.float = 'none';
     }
     prevSlide = slide;
-    block.style.zIndex = ++zIndex;
+    style.zIndex = ++zIndex;
     requestAnimationFrame(() => {
-      block.style.transition = `width ${transitionDuration}ms ${transitionTimingFunction}`;
-      block.style.width = '100%';
+      style.transition = `width ${transitionDuration}ms ${transitionTimingFunction}`;
+      style.width = '100%';
     });
   }, [slide, transitionDuration, transitionTimingFunction]);
 
   useEffect(() => {
-    smartPlay();
+    play();
     setWidthForSlides();
     window.addEventListener('resize', setWidthForSlides);
-    window.addEventListener('focus', smartPlay);
+    window.addEventListener('focus', play);
     window.addEventListener('blur', stop);
 
     return () => {
       stop();
       window.removeEventListener('resize', setWidthForSlides);
-      window.removeEventListener('focus', smartPlay);
+      window.removeEventListener('focus', play);
       window.removeEventListener('blur', stop);
     };
-  }, [setWidthForSlides, smartPlay, stop]);
+  }, [setWidthForSlides, play, stop]);
 
   const handlersForTotalSlider = useMemo(() => {
     if (stopOnHover) {
       return {
         onMouseOver: stop,
-        onMouseOut: smartPlay,
+        onMouseOut: play,
       };
     }
 
     return {};
-  }, [stopOnHover, stop, smartPlay]);
+  }, [stopOnHover, stop, play]);
 
   const handlersForSliderWrapper = useMemo(() => {
     if (withSwipe) {
@@ -326,7 +320,7 @@ Slider.defaultProps = {
   stopOnHover: true,
   navigationPosition: 'right',
   sizeNavButton: 35,
-  indentBetweenNavButtons: 30,
+  indentBetweenNavButtons: 15,
   sizePoints: 10,
   classNamePoints: undefined,
   classNamePoint: undefined,
