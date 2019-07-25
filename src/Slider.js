@@ -118,6 +118,7 @@ const Slider = ({
   withManageButtons,
   nextButton: NextButton,
   backButton: BackButton,
+  onChangeSlide,
   ...navProps
 }) => {
   const zIndex = useRef(0);
@@ -192,6 +193,9 @@ const Slider = ({
   );
 
   useEffect(() => {
+    if (typeof onChangeSlide === 'function') {
+      onChangeSlide({ currentSlide: slide, prevSlide: prevSlide.current });
+    }
     const {
       style,
       children: [child],
@@ -214,7 +218,7 @@ const Slider = ({
         style.width = '100%';
       }, 50);
     });
-  }, [slide, transitionDuration, transitionTimingFunction]);
+  }, [onChangeSlide, slide, transitionDuration, transitionTimingFunction]);
 
   useEffect(() => {
     play();
@@ -324,6 +328,7 @@ Slider.propTypes = {
   classNameManageButtons: PropTypes.string,
   classNameNextButton: PropTypes.string,
   classNameBackButton: PropTypes.string,
+  onChangeSlide: PropTypes.func,
   nextButtonText: PropTypes.string,
   backButtonText: PropTypes.string,
 };
@@ -356,6 +361,7 @@ Slider.defaultProps = {
   classNameManageButtons: undefined,
   classNameNextButton: undefined,
   classNameBackButton: undefined,
+  onChangeSlide: undefined,
   nextButtonText: 'next',
   backButtonText: 'back',
 };
