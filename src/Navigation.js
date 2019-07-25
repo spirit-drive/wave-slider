@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import Indicator from './Indicator';
@@ -34,11 +34,14 @@ const Navigation = ({
     [count, margin, indentBetweenNavButtons]
   );
   const stylePoints = useMemo(() => ({ width: `${sizePoints}px`, height: `${sizePoints}px` }), [sizePoints]);
-  const getPointPosition = useCallback(
-    number => ({ transform: `${translate}(${(indentBetweenNavButtons + sizeNavButton) * number}px)` }),
-    [indentBetweenNavButtons, sizeNavButton, translate]
+  const pointPositions = useMemo(
+    () =>
+      Array(count)
+        .fill()
+        .map((_, i) => ({ transform: `${translate}(${(indentBetweenNavButtons + sizeNavButton) * i}px)` })),
+    [count, indentBetweenNavButtons, sizeNavButton, translate]
   );
-  const styleForNavButtons = { ...styleNavButton, ...getPointPosition(slide) };
+  const styleForNavButtons = { ...styleNavButton, ...pointPositions[slide] };
   return (
     <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationPosition}`, classNameNav)}>
       {withIndicator && <Indicator style={styleForNavButtons} />}
