@@ -58,19 +58,13 @@ const Slider = ({
 
   const count = useMemo(() => children.length, [children]);
 
-  const next = useCallback(() => {
-    setSlide({ type: 'next', payload: count });
-    play();
-  }, [count]); // eslint-disable-line react-hooks/exhaustive-deps
+  const next = useCallback(() => setSlide({ type: 'next', payload: count }), [count]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const back = useCallback(() => {
-    setSlide({ type: 'back', payload: count });
-    play();
-  }, [count]); // eslint-disable-line react-hooks/exhaustive-deps
+  const back = useCallback(() => setSlide({ type: 'back', payload: count }), [count]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const move = useMemo(() => (isReverse ? back : next), [isReverse, back, next]);
 
-  const clear = useMemo(() => (autoPlay ? () => clearTimeout(intervalId.current) : () => {}), [autoPlay]);
+  const clear = useMemo(() => (autoPlay ? () => clearInterval(intervalId.current) : () => {}), [autoPlay]);
 
   const stop = useMemo(
     () =>
@@ -88,7 +82,7 @@ const Slider = ({
       autoPlay
         ? () => {
             setPause(false);
-            intervalId.current = setTimeout(move, interval);
+            intervalId.current = setInterval(move, interval);
           }
         : () => {},
     [autoPlay, interval, move]
@@ -128,7 +122,6 @@ const Slider = ({
     if (typeof onChangeSlide === 'function') {
       onChangeSlide({ currentSlide: slide, prevSlide: prevSlide.current });
     }
-    return stop;
   }, [slide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
