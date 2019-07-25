@@ -50,16 +50,11 @@ const Slider = ({
   const prevSlide = useRef(-1);
   const [isPause, setPause] = useState(!autoPlay);
 
-  const swipeStart = useCallback(
-    e => {
-      clickPos.current = e.clientX || e.touches[0].clientX;
-    },
-    [clickPos]
-  );
+  // eslint-disable-next-line no-return-assign
+  const swipeStart = useCallback(e => (clickPos.current = e.clientX || e.touches[0].clientX), [clickPos]);
 
-  const swipeEnd = useCallback(() => {
-    clickPos.current = null;
-  }, [clickPos]);
+  // eslint-disable-next-line no-return-assign
+  const swipeEnd = useCallback(() => (clickPos.current = null), [clickPos]);
 
   const [slide, setSlide] = useReducer(reducer, initialSlide);
   const toSlide = useCallback(payload => () => setSlide({ payload }), []);
