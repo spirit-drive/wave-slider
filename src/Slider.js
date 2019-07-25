@@ -290,7 +290,7 @@ Slider.defaultProps = {
   transitionDuration: 800,
   transitionTimingFunction: 'ease',
   navigation: true,
-  withIndicator: false,
+  withIndicator: true,
   withManageButtons: true,
   withFixedWidth: true,
   withSwipe: true,
