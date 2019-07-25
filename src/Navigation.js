@@ -49,7 +49,7 @@ const Navigation = ({
   ]);
   return (
     <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationPosition}`, classNameNav)}>
-      {withIndicator && <Indicator style={styleForNavButtons} {...indicatorProps} size={sizeNavButton} />}
+      {withIndicator && <Indicator style={styleForNavButtons} {...indicatorProps} slide={slide} size={sizeNavButton} />}
       <div className={cn('wave-slider-nav__point-wrapper', classNameWrapperPoint)} style={styleForNavButtons}>
         <div className={cn('wave-slider-nav__point', classNamePoints, classNamePoint)} style={stylePoints} />
       </div>
