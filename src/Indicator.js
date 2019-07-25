@@ -19,22 +19,22 @@ const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, isPaus
   useEffect(() => {
     count.current = 0;
     clearInterval(intervalId.current);
-    intervalId.current = setInterval(() => {
-      const angleStart = rotationStep * count.current;
-      const angleEnd = arcStep * count.current;
-      ctx.current.clearRect(0, 0, size, size);
-      ctx.current.beginPath();
-      ctx.current.arc(half, half, half - 1.5, angleStart, angleEnd + angleStart);
-      ctx.current.stroke();
-      ctx.current.closePath();
-      if (!isPause) {
+    if (!isPause) {
+      intervalId.current = setInterval(() => {
+        const angleStart = rotationStep * count.current;
+        const angleEnd = arcStep * count.current;
+        ctx.current.clearRect(0, 0, size, size);
+        ctx.current.beginPath();
+        ctx.current.arc(half, half, half - 1.5, angleStart, angleEnd + angleStart);
+        ctx.current.stroke();
+        ctx.current.closePath();
         ++count.current;
-      }
-      if (angleEnd > 2 * Math.PI) {
-        clearInterval(intervalId.current);
-      }
-      return () => clearInterval(intervalId.current);
-    }, 10);
+        if (angleEnd > 2 * Math.PI) {
+          clearInterval(intervalId.current);
+        }
+        return () => clearInterval(intervalId.current);
+      }, 10);
+    }
   }, [isPause, size, arcStep, half, interval, slide, rotationStep]);
 
   return <canvas ref={canvas} className="wave-slider-canvas" width={size} height={size} {...etc} />;

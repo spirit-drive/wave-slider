@@ -154,14 +154,14 @@ const Slider = ({
   useEffect(() => {
     play();
     window.addEventListener('focus', play);
-    window.addEventListener('blur', stop);
+    window.addEventListener('blur', pause);
 
     return () => {
       stop();
       window.removeEventListener('focus', play);
-      window.removeEventListener('blur', stop);
+      window.removeEventListener('blur', pause);
     };
-  }, [play, stop]);
+  }, [play, stop, pause]);
 
   useEffect(() => {
     if (withFixedWidth) {
