@@ -4,21 +4,6 @@ import cn from 'classnames';
 import Navigation from './Navigation';
 import './Slider.css';
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'next':
-      if (state + 1 === action.payload) return 0;
-      return state + 1;
-
-    case 'back':
-      if (state === 0) return action.payload - 1;
-      return state - 1;
-
-    default:
-      return action.payload;
-  }
-};
-
 const errorHandlerForInitialSlide = (initialSlide, childrenLength) => {
   if (initialSlide < 0) {
     throw new Error(`invalid initialSlide: ${initialSlide}\ninitialSlide should be more or equal 0`);
@@ -61,9 +46,31 @@ const Slider = ({
   useMemo(() => errorHandlerForInitialSlide(initialSlide, count), [initialSlide, count]);
 
   const [isPause, setPause] = useState(!autoPlay);
+
+  const reducer = useCallback(
+    (state, action) => {
+      switch (action.type) {
+        case 'next':
+          if (state + 1 === count) return 0;
+          return state + 1;
+
+        case 'back':
+          if (state === 0) return count - 1;
+          return state - 1;
+
+        case 'to':
+          return action.payload;
+
+        default:
+          throw new Error(`invalid type: ${action.type}`);
+      }
+    },
+    [count]
+  );
+
   const [slide, setSlide] = useReducer(reducer, initialSlide);
 
-  const toSlide = useCallback(payload => () => setSlide({ payload }), []);
+  const toSlide = useCallback(payload => () => setSlide({ type: 'to', payload }), []);
 
   const zIndex = useRef(0);
   const intervalId = useRef(null);
@@ -72,9 +79,9 @@ const Slider = ({
   const slides = useRef(children.map(() => React.createRef()));
   const slider = useRef(null);
 
-  const next = useCallback(() => setSlide({ type: 'next', payload: count }), [count]);
+  const next = useCallback(() => setSlide({ type: 'next' }), []);
 
-  const back = useCallback(() => setSlide({ type: 'back', payload: count }), [count]);
+  const back = useCallback(() => setSlide({ type: 'back' }), []);
 
   const move = useMemo(() => (isReverse ? back : next), [isReverse, back, next]);
 
