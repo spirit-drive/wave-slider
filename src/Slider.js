@@ -58,9 +58,9 @@ const Slider = ({
 
   const count = useMemo(() => children.length, [children]);
 
-  const next = useCallback(() => setSlide({ type: 'next', payload: count }), [count]); // eslint-disable-line react-hooks/exhaustive-deps
+  const next = useCallback(() => setSlide({ type: 'next', payload: count }), [count]);
 
-  const back = useCallback(() => setSlide({ type: 'back', payload: count }), [count]); // eslint-disable-line react-hooks/exhaustive-deps
+  const back = useCallback(() => setSlide({ type: 'back', payload: count }), [count]);
 
   const move = useMemo(() => (isReverse ? back : next), [isReverse, back, next]);
 
