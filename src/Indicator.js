@@ -19,9 +19,11 @@ const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, isPaus
   useEffect(() => {
     count.current = 0;
     clearInterval(intervalId.current);
+    ctx.current.clearRect(0, 0, size, size);
+    const start = Math.random() * Math.PI * 2;
     if (!isPause) {
       intervalId.current = setInterval(() => {
-        const angleStart = rotationStep * count.current;
+        const angleStart = rotationStep * count.current + start;
         const angleEnd = arcStep * count.current;
         ctx.current.clearRect(0, 0, size, size);
         ctx.current.beginPath();
