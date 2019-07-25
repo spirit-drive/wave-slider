@@ -2,6 +2,14 @@ import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import './Indicator.css';
 
+const drawArc = (context, size, radius, start, end) => {
+  context.clearRect(0, 0, size, size);
+  context.beginPath();
+  context.arc(radius, radius, radius - 1.5, start, end);
+  context.stroke();
+  context.closePath();
+};
+
 const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, canvasInterval, isPause, ...etc }) => {
   const half = useMemo(() => size / 2, [size]);
   const arcStep = useMemo(() => ((2 * Math.PI) / interval) * canvasInterval, [canvasInterval, interval]);
@@ -16,11 +24,7 @@ const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, canvas
       intervalId.current = setInterval(() => {
         const angleStart = rotationStep * count.current + start;
         const angleEnd = arcStep * count.current;
-        ctx.current.clearRect(0, 0, size, size);
-        ctx.current.beginPath();
-        ctx.current.arc(half, half, half - 1.5, angleStart, angleEnd + angleStart);
-        ctx.current.stroke();
-        ctx.current.closePath();
+        drawArc(ctx.current, size, half, angleStart, angleEnd + angleStart);
         ++count.current;
         if (angleEnd > 2 * Math.PI) {
           clearInterval(intervalId.current);
