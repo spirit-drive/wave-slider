@@ -2,9 +2,9 @@ import React, { useRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import './Indicator.css';
 
-const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, isPause, ...etc }) => {
+const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, canvasInterval, isPause, ...etc }) => {
   const half = useMemo(() => size / 2, [size]);
-  const arcStep = useMemo(() => ((2 * Math.PI) / interval) * 10, [interval]);
+  const arcStep = useMemo(() => ((2 * Math.PI) / interval) * canvasInterval, [canvasInterval, interval]);
   const intervalId = useRef(null);
   const count = useRef(0);
   const ctx = useRef(null);
@@ -35,9 +35,9 @@ const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, isPaus
           clearInterval(intervalId.current);
         }
         return () => clearInterval(intervalId.current);
-      }, 10);
+      }, canvasInterval);
     }
-  }, [isPause, size, arcStep, half, interval, slide, rotationStep]);
+  }, [isPause, size, arcStep, half, interval, slide, rotationStep, canvasInterval]);
 
   return <canvas ref={canvas} className="wave-slider-canvas" width={size} height={size} {...etc} />;
 };
@@ -45,6 +45,7 @@ const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, isPaus
 Indicator.propTypes = {
   colorIndicator: PropTypes.string.isRequired,
   size: PropTypes.number.isRequired,
+  canvasInterval: PropTypes.number.isRequired,
   interval: PropTypes.number.isRequired,
   slide: PropTypes.number.isRequired,
   isPause: PropTypes.bool.isRequired,
