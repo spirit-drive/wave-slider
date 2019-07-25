@@ -1,4 +1,4 @@
-import React, { useMemo, useReducer, useCallback, useEffect, useRef } from 'react';
+import React, { Fragment, useMemo, useReducer, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import './Slider.css';
@@ -110,6 +110,14 @@ const Slider = ({
   offsetForSwipeStep,
   withSwipe,
   withFixedWidth,
+  nextButtonText,
+  backButtonText,
+  classNameManageButtons,
+  classNameNextButton,
+  classNameBackButton,
+  withManageButtons,
+  nextButton: NextButton,
+  backButton: BackButton,
   ...navProps
 }) => {
   const zIndex = useRef(0);
@@ -273,18 +281,24 @@ const Slider = ({
         ))}
       </div>
       {navigation && <Navigation slide={slide} count={count} toSlide={toSlide} {...navProps} />}
-      <button type="button" onClick={next}>
-        next
-      </button>
-      <button type="button" onClick={back}>
-        back
-      </button>
+      {withManageButtons && (
+        <Fragment>
+          <BackButton className={cn(classNameManageButtons, classNameBackButton)} onClick={back}>
+            {backButtonText}
+          </BackButton>
+          <NextButton className={cn(classNameManageButtons, classNameNextButton)} onClick={next}>
+            {nextButtonText}
+          </NextButton>
+        </Fragment>
+      )}
     </div>
   );
 };
 
 Slider.propTypes = {
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.func]).isRequired,
+  nextButton: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.func]),
+  backButton: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.func]),
   className: PropTypes.string,
   classNameNav: PropTypes.string,
   interval: PropTypes.number,
@@ -293,6 +307,7 @@ Slider.propTypes = {
   transitionDuration: PropTypes.number,
   transitionTimingFunction: PropTypes.string,
   navigation: PropTypes.bool,
+  withManageButtons: PropTypes.bool,
   withFixedWidth: PropTypes.bool,
   withSwipe: PropTypes.bool,
   autoPlay: PropTypes.bool,
@@ -306,9 +321,16 @@ Slider.propTypes = {
   classNamePoint: PropTypes.string,
   classNameButtons: PropTypes.string,
   classNameWrapperPoint: PropTypes.string,
+  classNameManageButtons: PropTypes.string,
+  classNameNextButton: PropTypes.string,
+  classNameBackButton: PropTypes.string,
+  nextButtonText: PropTypes.string,
+  backButtonText: PropTypes.string,
 };
 
 Slider.defaultProps = {
+  nextButton: 'button',
+  backButton: 'button',
   className: undefined,
   classNameNav: undefined,
   interval: 1000,
@@ -317,6 +339,7 @@ Slider.defaultProps = {
   transitionDuration: 800,
   transitionTimingFunction: 'ease',
   navigation: true,
+  withManageButtons: true,
   withFixedWidth: true,
   withSwipe: true,
   autoPlay: true,
@@ -330,6 +353,11 @@ Slider.defaultProps = {
   classNamePoint: undefined,
   classNameButtons: undefined,
   classNameWrapperPoint: undefined,
+  classNameManageButtons: undefined,
+  classNameNextButton: undefined,
+  classNameBackButton: undefined,
+  nextButtonText: 'next',
+  backButtonText: 'back',
 };
 
 export default Slider;
