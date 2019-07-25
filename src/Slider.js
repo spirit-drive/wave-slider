@@ -110,21 +110,18 @@ const Slider = ({
     [play]
   );
 
-  const swipeMove = useMemo(
-    () =>
-      withSwipe
-        ? e => {
-            if (clickPos.current === null) return;
-            const clientX = e.clientX || e.touches[0].clientX;
-            const d = clientX - clickPos.current;
-            if (Math.abs(d) > offsetForSwipeStep) {
-              if (d > 0) next();
-              else back();
-              clickPos.current = clientX;
-            }
-          }
-        : () => {},
-    [withSwipe, next, back, offsetForSwipeStep]
+  const swipeMove = useCallback(
+    e => {
+      if (clickPos.current === null) return;
+      const clientX = e.clientX || e.touches[0].clientX;
+      const d = clientX - clickPos.current;
+      if (Math.abs(d) > offsetForSwipeStep) {
+        if (d > 0) next();
+        else back();
+        clickPos.current = clientX;
+      }
+    },
+    [next, back, offsetForSwipeStep]
   );
 
   useEffect(() => {
