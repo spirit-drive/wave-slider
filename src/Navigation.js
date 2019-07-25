@@ -26,10 +26,13 @@ const Navigation = ({
   const margin = useMemo(() => (isCenter ? 'marginLeft' : 'marginTop'), [isCenter]);
   const translate = useMemo(() => (isCenter ? 'translateX' : 'translateY'), [isCenter]);
 
-  const getStyleNavButton = useCallback(i => ({ [margin]: i ? `${indentBetweenNavButtons}px` : 0 }), [
-    margin,
-    indentBetweenNavButtons,
-  ]);
+  const stylesNavButtons = useMemo(
+    () =>
+      Array(count)
+        .fill()
+        .map((_, i) => ({ [margin]: i ? `${indentBetweenNavButtons}px` : 0 })),
+    [count, margin, indentBetweenNavButtons]
+  );
   const stylePoints = useMemo(() => ({ width: `${sizePoints}px`, height: `${sizePoints}px` }), [sizePoints]);
   const getPointPosition = useCallback(
     number => ({ transform: `${translate}(${(indentBetweenNavButtons + sizeNavButton) * number}px)` }),
@@ -50,7 +53,7 @@ const Navigation = ({
             className={cn('wave-slider-nav__item', i === slide && 'wave-slider-nav__item_active', classNameButtons)}
             type="button"
             onClick={toSlide(i)}
-            style={{ ...styleNavButton, ...getStyleNavButton(i) }}
+            style={{ ...styleNavButton, ...stylesNavButtons[i] }}
           >
             <span className={cn('wave-slider-nav__points', classNamePoints)} style={stylePoints} />
           </button>
