@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import './Indicator.css';
 
-const Indicator = ({ size, colorIndicator, interval, slide, ...etc }) => {
+const Indicator = ({ size, colorIndicator, interval, slide, isPause, ...etc }) => {
   const half = useMemo(() => size / 2, [size]);
   const arcStep = useMemo(() => ((2 * Math.PI) / interval) * 10, [interval]);
   const intervalId = useRef(null);
@@ -26,13 +26,19 @@ const Indicator = ({ size, colorIndicator, interval, slide, ...etc }) => {
       ctx.current.arc(half, half, half - 1.5, 0, angle);
       ctx.current.stroke();
       ctx.current.closePath();
-      ++count.current;
+      if (!isPause) {
+        ++count.current;
+      }
       if (angle > 2 * Math.PI) {
         clearInterval(intervalId.current);
       }
       return () => clearInterval(intervalId.current);
     }, 10);
-  }, [size, arcStep, half, interval, slide]);
+  }, [isPause, size, arcStep, half, interval, slide]);
+
+  useEffect(() => {
+    console.log(isPause);
+  }, [isPause]);
 
   return <canvas ref={canvas} className="wave-slider-canvas" width={size} height={size} {...etc} />;
 };
@@ -42,6 +48,7 @@ Indicator.propTypes = {
   size: PropTypes.number.isRequired,
   interval: PropTypes.number.isRequired,
   slide: PropTypes.number.isRequired,
+  isPause: PropTypes.bool.isRequired,
 };
 
 export default Indicator;

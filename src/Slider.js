@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useReducer, useCallback, useEffect, useRef } from 'react';
+import React, { Fragment, useMemo, useState, useReducer, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import Navigation from './Navigation';
@@ -48,6 +48,7 @@ const Slider = ({
   const intervalId = useRef(null);
   const clickPos = useRef(null);
   const prevSlide = useRef(-1);
+  const [isPause, setPause] = useState(!autoPlay);
 
   const swipeStart = useCallback(
     e => {
@@ -83,6 +84,7 @@ const Slider = ({
       autoPlay
         ? () => {
             stop();
+            setPause(false);
             intervalId.current = setTimeout(move, interval);
           }
         : () => {},
@@ -167,16 +169,21 @@ const Slider = ({
     return undefined;
   }, [withFixedWidth, setWidthForSlides]);
 
+  const onMouseOver = useCallback(() => {
+    stop();
+    setPause(true);
+  }, [stop]);
+
   const handlersForTotalSlider = useMemo(() => {
     if (stopOnHover) {
       return {
-        onMouseOver: stop,
+        onMouseOver,
         onMouseOut: play,
       };
     }
 
     return {};
-  }, [stopOnHover, stop, play]);
+  }, [stopOnHover, onMouseOver, play]);
 
   const handlersForSliderWrapper = useMemo(() => {
     if (withSwipe) {
@@ -214,6 +221,7 @@ const Slider = ({
           toSlide={toSlide}
           autoPlay={autoPlay}
           interval={interval}
+          isPause={isPause}
           {...navProps}
         />
       )}
@@ -282,7 +290,7 @@ Slider.defaultProps = {
   withManageButtons: true,
   withFixedWidth: true,
   withSwipe: true,
-  autoPlay: false,
+  autoPlay: true,
   isReverse: false,
   stopOnHover: true,
   navigationPosition: 'center',

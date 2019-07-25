@@ -18,6 +18,7 @@ const Navigation = ({
   classNameButtons,
   classNameWrapperPoint,
   withIndicator,
+  autoPlay,
   ...indicatorProps
 }) => {
   const styleNavButton = useMemo(() => ({ width: `${sizeNavButton}px`, height: `${sizeNavButton}px` }), [
@@ -49,7 +50,9 @@ const Navigation = ({
   ]);
   return (
     <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationPosition}`, classNameNav)}>
-      {withIndicator && <Indicator style={styleForNavButtons} {...indicatorProps} slide={slide} size={sizeNavButton} />}
+      {withIndicator && autoPlay && (
+        <Indicator style={styleForNavButtons} {...indicatorProps} slide={slide} size={sizeNavButton} />
+      )}
       <div className={cn('wave-slider-nav__point-wrapper', classNameWrapperPoint)} style={styleForNavButtons}>
         <div className={cn('wave-slider-nav__point', classNamePoints, classNamePoint)} style={stylePoints} />
       </div>
@@ -79,12 +82,14 @@ Navigation.propTypes = {
   sizePoints: PropTypes.number.isRequired,
   indentBetweenNavButtons: PropTypes.number.isRequired,
   colorIndicator: PropTypes.string.isRequired,
+  autoPlay: PropTypes.bool.isRequired,
+  withIndicator: PropTypes.bool.isRequired,
+  isPause: PropTypes.bool.isRequired,
   classNameNav: PropTypes.string,
   classNamePoints: PropTypes.string,
   classNamePoint: PropTypes.string,
   classNameButtons: PropTypes.string,
   classNameWrapperPoint: PropTypes.string,
-  withIndicator: PropTypes.bool,
 };
 
 Navigation.defaultProps = {
@@ -93,7 +98,6 @@ Navigation.defaultProps = {
   classNamePoint: undefined,
   classNameButtons: undefined,
   classNameWrapperPoint: undefined,
-  withIndicator: true,
 };
 
 export default Navigation;
