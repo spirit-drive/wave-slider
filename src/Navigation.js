@@ -5,7 +5,7 @@ import Indicator from './Indicator';
 import './Navigation.css';
 
 const Navigation = ({
-  count,
+  quantity,
   toSlide,
   slide,
   sizeNavButton,
@@ -30,18 +30,18 @@ const Navigation = ({
 
   const stylesNavButtons = useMemo(
     () =>
-      Array(count)
+      Array(quantity)
         .fill()
         .map((_, i) => ({ [margin]: i ? `${indentBetweenNavButtons}px` : 0 })),
-    [count, margin, indentBetweenNavButtons]
+    [quantity, margin, indentBetweenNavButtons]
   );
   const stylePoints = useMemo(() => ({ width: `${sizePoints}px`, height: `${sizePoints}px` }), [sizePoints]);
   const pointPositions = useMemo(
     () =>
-      Array(count)
+      Array(quantity)
         .fill()
         .map((_, i) => ({ transform: `${translate}(${(indentBetweenNavButtons + sizeNavButton) * i}px)` })),
-    [count, indentBetweenNavButtons, sizeNavButton, translate]
+    [quantity, indentBetweenNavButtons, sizeNavButton, translate]
   );
   const styleForIndicators = useMemo(() => ({ ...styleNavButton, ...pointPositions[slide] }), [
     pointPositions,
@@ -56,7 +56,7 @@ const Navigation = ({
       <div className={cn('wave-slider-nav__point-wrapper', classNameWrapperPoint)} style={styleForIndicators}>
         <div className={cn('wave-slider-nav__point', classNamePoints, classNamePoint)} style={stylePoints} />
       </div>
-      {Array(count)
+      {Array(quantity)
         .fill()
         .map((_, i) => (
           <button
@@ -74,7 +74,7 @@ const Navigation = ({
 };
 
 Navigation.propTypes = {
-  count: PropTypes.number.isRequired,
+  quantity: PropTypes.number.isRequired,
   slide: PropTypes.number.isRequired,
   toSlide: PropTypes.func.isRequired,
   navigationPosition: PropTypes.oneOf(['center', 'left', 'right']).isRequired,

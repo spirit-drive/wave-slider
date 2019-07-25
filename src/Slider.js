@@ -41,9 +41,9 @@ const Slider = ({
   onChangeSlide,
   ...navProps
 }) => {
-  const count = useMemo(() => children.length, [children]);
+  const quantity = useMemo(() => children.length, [children]);
 
-  useMemo(() => errorHandlerForInitialSlide(initialSlide, count), [initialSlide, count]);
+  useMemo(() => errorHandlerForInitialSlide(initialSlide, quantity), [initialSlide, quantity]);
 
   const [isPause, setPause] = useState(!autoPlay);
 
@@ -51,11 +51,11 @@ const Slider = ({
     (state, action) => {
       switch (action.type) {
         case 'next':
-          if (state + 1 === count) return 0;
+          if (state + 1 === quantity) return 0;
           return state + 1;
 
         case 'back':
-          if (state === 0) return count - 1;
+          if (state === 0) return quantity - 1;
           return state - 1;
 
         case 'to':
@@ -65,7 +65,7 @@ const Slider = ({
           throw new Error(`invalid type: ${action.type}`);
       }
     },
-    [count]
+    [quantity]
   );
 
   const [slide, setSlide] = useReducer(reducer, initialSlide);
@@ -74,7 +74,7 @@ const Slider = ({
 
   const zIndex = useRef(0);
   const intervalId = useRef(-1);
-  const clickPos = useRef(-1);
+  const clickPos = useRef(null);
   const prevSlide = useRef(-1);
   const slides = useRef(children.map(() => React.createRef()));
   const slider = useRef(null);
@@ -246,7 +246,7 @@ const Slider = ({
       {navigation && (
         <Navigation
           slide={slide}
-          count={count}
+          quantity={quantity}
           toSlide={toSlide}
           autoPlay={autoPlay}
           interval={interval}
