@@ -79,6 +79,11 @@ const Slider = ({
 
   const stop = useMemo(() => (autoPlay ? () => clearTimeout(intervalId.current) : () => {}), [autoPlay]);
 
+  const pause = useCallback(() => {
+    stop();
+    setPause(true);
+  }, [stop]);
+
   const play = useMemo(
     () =>
       autoPlay
@@ -169,21 +174,16 @@ const Slider = ({
     return undefined;
   }, [withFixedWidth, setWidthForSlides]);
 
-  const onMouseOver = useCallback(() => {
-    stop();
-    setPause(true);
-  }, [stop]);
-
   const handlersForTotalSlider = useMemo(() => {
     if (stopOnHover) {
       return {
-        onMouseOver,
+        onMouseOver: pause,
         onMouseOut: play,
       };
     }
 
     return {};
-  }, [stopOnHover, onMouseOver, play]);
+  }, [stopOnHover, pause, play]);
 
   const handlersForSliderWrapper = useMemo(() => {
     if (withSwipe) {
