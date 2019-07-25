@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import './Indicator.css';
 
-const Indicator = ({ size, colorIndicator, interval, slide, isPause, ...etc }) => {
+const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, isPause, ...etc }) => {
   const half = useMemo(() => size / 2, [size]);
   const arcStep = useMemo(() => ((2 * Math.PI) / interval) * 10, [interval]);
   const intervalId = useRef(null);
@@ -20,25 +20,22 @@ const Indicator = ({ size, colorIndicator, interval, slide, isPause, ...etc }) =
     count.current = 0;
     clearInterval(intervalId.current);
     intervalId.current = setInterval(() => {
-      const angle = arcStep * count.current;
+      const angleStart = rotationStep * count.current;
+      const angleEnd = arcStep * count.current;
       ctx.current.clearRect(0, 0, size, size);
       ctx.current.beginPath();
-      ctx.current.arc(half, half, half - 1.5, 0, angle);
+      ctx.current.arc(half, half, half - 1.5, angleStart, angleEnd + angleStart);
       ctx.current.stroke();
       ctx.current.closePath();
       if (!isPause) {
         ++count.current;
       }
-      if (angle > 2 * Math.PI) {
+      if (angleEnd > 2 * Math.PI) {
         clearInterval(intervalId.current);
       }
       return () => clearInterval(intervalId.current);
     }, 10);
-  }, [isPause, size, arcStep, half, interval, slide]);
-
-  useEffect(() => {
-    console.log(isPause);
-  }, [isPause]);
+  }, [isPause, size, arcStep, half, interval, slide, rotationStep]);
 
   return <canvas ref={canvas} className="wave-slider-canvas" width={size} height={size} {...etc} />;
 };
@@ -49,6 +46,7 @@ Indicator.propTypes = {
   interval: PropTypes.number.isRequired,
   slide: PropTypes.number.isRequired,
   isPause: PropTypes.bool.isRequired,
+  rotationStep: PropTypes.number.isRequired,
 };
 
 export default Indicator;
