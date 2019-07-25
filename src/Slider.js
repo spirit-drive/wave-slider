@@ -44,20 +44,18 @@ const Slider = ({
   onChangeSlide,
   ...navProps
 }) => {
+  const [isPause, setPause] = useState(!autoPlay);
+  const [slide, setSlide] = useReducer(reducer, initialSlide);
+
+  const toSlide = useCallback(payload => () => setSlide({ payload }), []);
+
   const zIndex = useRef(0);
   const intervalId = useRef(null);
   const clickPos = useRef(null);
   const prevSlide = useRef(-1);
-  const [isPause, setPause] = useState(!autoPlay);
+  const slides = useRef(children.map(() => React.createRef()));
+  const slider = useRef(null);
 
-  // eslint-disable-next-line no-return-assign
-  const swipeStart = useCallback(e => (clickPos.current = e.clientX || e.touches[0].clientX), [clickPos]);
-
-  // eslint-disable-next-line no-return-assign
-  const swipeEnd = useCallback(() => (clickPos.current = null), [clickPos]);
-
-  const [slide, setSlide] = useReducer(reducer, initialSlide);
-  const toSlide = useCallback(payload => () => setSlide({ payload }), []);
   const count = useMemo(() => children.length, [children]);
 
   const next = useCallback(() => {
@@ -96,14 +94,11 @@ const Slider = ({
     [autoPlay, interval, move]
   );
 
-  const slides = useRef(children.map(() => React.createRef()));
-  const slider = useRef(null);
+  // eslint-disable-next-line no-return-assign
+  const swipeStart = useCallback(e => (clickPos.current = e.clientX || e.touches[0].clientX), [clickPos]);
 
-  const setWidthForSlides = useCallback(() => {
-    const { width } = getComputedStyle(slider.current);
-    // eslint-disable-next-line no-param-reassign,no-return-assign
-    slides.current.forEach(item => (item.current.children[0].style.width = width));
-  }, [slider, slides]);
+  // eslint-disable-next-line no-return-assign
+  const swipeEnd = useCallback(() => (clickPos.current = null), [clickPos]);
 
   const swipeMove = useMemo(
     () =>
@@ -126,6 +121,10 @@ const Slider = ({
     if (typeof onChangeSlide === 'function') {
       onChangeSlide({ currentSlide: slide, prevSlide: prevSlide.current });
     }
+    return stop;
+  }, [slide]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     const {
       style,
       children: [child],
@@ -149,8 +148,7 @@ const Slider = ({
         style.width = '100%';
       }, 50);
     });
-    return stop;
-  }, [slide, autoPlay, onChangeSlide, transitionDuration, transitionTimingFunction, stop]);
+  }, [slide, autoPlay, transitionDuration, transitionTimingFunction]);
 
   useEffect(() => {
     play();
@@ -163,6 +161,12 @@ const Slider = ({
       window.removeEventListener('blur', stop);
     };
   }, [play, clear, stop]);
+
+  const setWidthForSlides = useCallback(() => {
+    const { width } = getComputedStyle(slider.current);
+    // eslint-disable-next-line no-param-reassign,no-return-assign
+    slides.current.forEach(item => (item.current.children[0].style.width = width));
+  }, [slider, slides]);
 
   useEffect(() => {
     if (withFixedWidth) {
