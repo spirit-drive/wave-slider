@@ -166,14 +166,13 @@ const Slider = ({
     };
   }, [play, clear, stop]);
 
-  const setWidthForSlides = useCallback(() => {
-    const { width } = getComputedStyle(slider.current);
-    // eslint-disable-next-line no-param-reassign,no-return-assign
-    slides.current.forEach(item => (item.current.children[0].style.width = width));
-  }, [slider, slides]);
-
   useEffect(() => {
     if (withFixedWidth) {
+      const setWidthForSlides = () => {
+        const { width } = getComputedStyle(slider.current);
+        slides.current.forEach(item => (item.current.children[0].style.width = width)); // eslint-disable-line no-param-reassign, no-return-assign
+      };
+
       setWidthForSlides();
       window.addEventListener('resize', setWidthForSlides);
 
@@ -182,7 +181,7 @@ const Slider = ({
       };
     }
     return undefined;
-  }, [withFixedWidth, setWidthForSlides]);
+  }, [withFixedWidth]);
 
   const handlersForTotalSlider = useMemo(() => {
     if (stopOnHover) {
