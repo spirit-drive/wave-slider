@@ -72,23 +72,28 @@ const Slider = ({
 
   const move = useMemo(() => (isReverse ? back : next), [isReverse, back, next]);
 
-  const stop = useMemo(() => (autoPlay ? () => clearTimeout(intervalId.current) : () => {}), [autoPlay]);
+  const clear = useMemo(() => (autoPlay ? () => clearTimeout(intervalId.current) : () => {}), [autoPlay]);
 
-  const pause = useCallback(() => {
-    stop();
-    setPause(true);
-  }, [stop]);
+  const stop = useMemo(
+    () =>
+      autoPlay
+        ? () => {
+            clear();
+            setPause(true);
+          }
+        : () => {},
+    [autoPlay, clear]
+  );
 
   const play = useMemo(
     () =>
       autoPlay
         ? () => {
-            stop();
             setPause(false);
             intervalId.current = setTimeout(move, interval);
           }
         : () => {},
-    [autoPlay, interval, move, stop]
+    [autoPlay, interval, move]
   );
 
   const slides = useRef(children.map(() => React.createRef()));
@@ -144,19 +149,20 @@ const Slider = ({
         style.width = '100%';
       }, 50);
     });
-  }, [onChangeSlide, slide, transitionDuration, transitionTimingFunction]);
+    return stop;
+  }, [slide, autoPlay, onChangeSlide, transitionDuration, transitionTimingFunction, stop]);
 
   useEffect(() => {
     play();
     window.addEventListener('focus', play);
-    window.addEventListener('blur', pause);
+    window.addEventListener('blur', stop);
 
     return () => {
-      stop();
+      clear();
       window.removeEventListener('focus', play);
-      window.removeEventListener('blur', pause);
+      window.removeEventListener('blur', stop);
     };
-  }, [play, stop, pause]);
+  }, [play, clear, stop]);
 
   useEffect(() => {
     if (withFixedWidth) {
@@ -173,13 +179,13 @@ const Slider = ({
   const handlersForTotalSlider = useMemo(() => {
     if (stopOnHover) {
       return {
-        onMouseOver: pause,
+        onMouseOver: stop,
         onMouseOut: play,
       };
     }
 
     return {};
-  }, [stopOnHover, pause, play]);
+  }, [stopOnHover, stop, play]);
 
   const handlersForSliderWrapper = useMemo(() => {
     if (withSwipe) {
