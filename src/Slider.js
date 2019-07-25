@@ -88,21 +88,25 @@ const Slider = ({
     [autoPlay, interval, move]
   );
 
-  const swipeStart = useCallback(
-    e => {
-      clickPos.current = e.clientX || e.touches[0].clientX;
-      if (!e.clientX) stop();
-    },
-    [stop]
-  );
+  const nextEnhance = useCallback(() => {
+    clear();
+    next();
+    if (!isPause) play();
+  }, [clear, isPause, next, play]);
 
-  const swipeEnd = useCallback(
-    e => {
-      clickPos.current = null;
-      if (!e.clientX) play();
-    },
-    [play]
-  );
+  const backEnhance = useCallback(() => {
+    clear();
+    back();
+    if (!isPause) play();
+  }, [back, clear, isPause, play]);
+
+  const swipeStart = useCallback(e => {
+    clickPos.current = e.clientX || e.touches[0].clientX;
+  }, []);
+
+  const swipeEnd = useCallback(() => {
+    clickPos.current = null;
+  }, []);
 
   const swipeMove = useCallback(
     e => {
@@ -110,12 +114,12 @@ const Slider = ({
       const clientX = e.clientX || e.touches[0].clientX;
       const d = clientX - clickPos.current;
       if (Math.abs(d) > offsetForSwipeStep) {
-        if (d > 0) next();
-        else back();
+        if (d > 0) nextEnhance();
+        else backEnhance();
         clickPos.current = clientX;
       }
     },
-    [next, back, offsetForSwipeStep]
+    [offsetForSwipeStep, nextEnhance, backEnhance]
   );
 
   useEffect(() => {
@@ -232,10 +236,10 @@ const Slider = ({
       )}
       {withManageButtons && (
         <Fragment>
-          <BackButton className={cn(classNameManageButtons, classNameBackButton)} onClick={back}>
+          <BackButton className={cn(classNameManageButtons, classNameBackButton)} onClick={backEnhance}>
             {backButtonText}
           </BackButton>
-          <NextButton className={cn(classNameManageButtons, classNameNextButton)} onClick={next}>
+          <NextButton className={cn(classNameManageButtons, classNameNextButton)} onClick={nextEnhance}>
             {nextButtonText}
           </NextButton>
         </Fragment>
@@ -287,7 +291,7 @@ Slider.defaultProps = {
   backButton: 'button',
   className: undefined,
   classNameNav: undefined,
-  interval: 1000,
+  interval: 5000,
   canvasInterval: 30,
   offsetForSwipeStep: 50,
   initialSlide: 0,
