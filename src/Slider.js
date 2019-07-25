@@ -19,6 +19,18 @@ const reducer = (state, action) => {
   }
 };
 
+const errorHandlerForInitialSlide = (initialSlide, childrenLength) => {
+  if (initialSlide < 0) {
+    throw new Error(`invalid initialSlide: ${initialSlide}\ninitialSlide should be more or equal 0`);
+  }
+
+  if (initialSlide >= childrenLength) {
+    throw new Error(
+      `invalid initialSlide: ${initialSlide}\ninitialSlide should be less or equal ${childrenLength - 1}`
+    );
+  }
+};
+
 const Slider = ({
   className,
   transitionDuration,
@@ -44,6 +56,10 @@ const Slider = ({
   onChangeSlide,
   ...navProps
 }) => {
+  const count = useMemo(() => children.length, [children]);
+
+  useMemo(() => errorHandlerForInitialSlide(initialSlide, count), [initialSlide, count]);
+
   const [isPause, setPause] = useState(!autoPlay);
   const [slide, setSlide] = useReducer(reducer, initialSlide);
 
@@ -55,8 +71,6 @@ const Slider = ({
   const prevSlide = useRef(-1);
   const slides = useRef(children.map(() => React.createRef()));
   const slider = useRef(null);
-
-  const count = useMemo(() => children.length, [children]);
 
   const next = useCallback(() => setSlide({ type: 'next', payload: count }), [count]);
 
