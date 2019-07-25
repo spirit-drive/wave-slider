@@ -73,8 +73,8 @@ const Slider = ({
   const toSlide = useCallback(payload => () => setSlide({ type: 'to', payload }), []);
 
   const zIndex = useRef(0);
-  const intervalId = useRef(null);
-  const clickPos = useRef(null);
+  const intervalId = useRef(-1);
+  const clickPos = useRef(-1);
   const prevSlide = useRef(-1);
   const slides = useRef(children.map(() => React.createRef()));
   const slider = useRef(null);
