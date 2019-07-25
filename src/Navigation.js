@@ -43,7 +43,7 @@ const Navigation = ({
         .map((_, i) => ({ transform: `${translate}(${(indentBetweenNavButtons + sizeNavButton) * i}px)` })),
     [count, indentBetweenNavButtons, sizeNavButton, translate]
   );
-  const styleForNavButtons = useMemo(() => ({ ...styleNavButton, ...pointPositions[slide] }), [
+  const styleForIndicators = useMemo(() => ({ ...styleNavButton, ...pointPositions[slide] }), [
     pointPositions,
     slide,
     styleNavButton,
@@ -51,9 +51,9 @@ const Navigation = ({
   return (
     <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationPosition}`, classNameNav)}>
       {withIndicator && autoPlay && (
-        <Indicator style={styleForNavButtons} {...indicatorProps} slide={slide} size={sizeNavButton} />
+        <Indicator style={styleForIndicators} {...indicatorProps} slide={slide} size={sizeNavButton} />
       )}
-      <div className={cn('wave-slider-nav__point-wrapper', classNameWrapperPoint)} style={styleForNavButtons}>
+      <div className={cn('wave-slider-nav__point-wrapper', classNameWrapperPoint)} style={styleForIndicators}>
         <div className={cn('wave-slider-nav__point', classNamePoints, classNamePoint)} style={stylePoints} />
       </div>
       {Array(count)
