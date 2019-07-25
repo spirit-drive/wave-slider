@@ -94,11 +94,21 @@ const Slider = ({
     [autoPlay, interval, move]
   );
 
-  // eslint-disable-next-line no-return-assign
-  const swipeStart = useCallback(e => (clickPos.current = e.clientX || e.touches[0].clientX), [clickPos]);
+  const swipeStart = useCallback(
+    e => {
+      clickPos.current = e.clientX || e.touches[0].clientX;
+      if (!e.clientX) stop();
+    },
+    [stop]
+  );
 
-  // eslint-disable-next-line no-return-assign
-  const swipeEnd = useCallback(() => (clickPos.current = null), [clickPos]);
+  const swipeEnd = useCallback(
+    e => {
+      clickPos.current = null;
+      if (!e.clientX) play();
+    },
+    [play]
+  );
 
   const swipeMove = useMemo(
     () =>
