@@ -14,7 +14,7 @@ const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, isPaus
     ctx.current = canvas.current.getContext('2d');
     ctx.current.strokeStyle = colorIndicator;
     ctx.current.lineWidth = 2;
-  }, [colorIndicator, half, size]);
+  }, [colorIndicator]);
 
   useEffect(() => {
     count.current = 0;
