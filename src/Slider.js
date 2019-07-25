@@ -161,7 +161,7 @@ const Slider = ({
       window.removeEventListener('focus', play);
       window.removeEventListener('blur', stop);
     };
-  }, [setWidthForSlides, play, stop]);
+  }, [play, stop]);
 
   useEffect(() => {
     if (withFixedWidth) {
