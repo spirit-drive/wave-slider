@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import './Indicator.css';
 
@@ -10,13 +10,7 @@ const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, canvas
   const ctx = useRef(null);
   const canvas = useRef(null);
 
-  useEffect(() => {
-    ctx.current = canvas.current.getContext('2d');
-    ctx.current.strokeStyle = colorIndicator;
-    ctx.current.lineWidth = 2;
-  }, [colorIndicator]);
-
-  useEffect(() => {
+  const draw = useCallback(() => {
     if (!isPause) {
       const start = Math.random() * Math.PI * 2;
       intervalId.current = setInterval(() => {
@@ -33,12 +27,24 @@ const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, canvas
         }
       }, canvasInterval);
     }
-    return () => {
-      count.current = 0;
-      clearInterval(intervalId.current);
-      ctx.current.clearRect(0, 0, size, size);
-    };
-  }, [isPause, size, arcStep, half, interval, slide, rotationStep, canvasInterval]);
+  }, [arcStep, canvasInterval, half, isPause, rotationStep, size]);
+
+  const clear = useCallback(() => {
+    count.current = 0;
+    clearInterval(intervalId.current);
+    ctx.current.clearRect(0, 0, size, size);
+  }, [size]);
+
+  useEffect(() => {
+    ctx.current = canvas.current.getContext('2d');
+    ctx.current.strokeStyle = colorIndicator;
+    ctx.current.lineWidth = 2;
+  }, [colorIndicator]);
+
+  useEffect(() => {
+    draw();
+    return clear;
+  }, [isPause, slide, clear, draw]);
 
   return <canvas ref={canvas} className="wave-slider-canvas" width={size} height={size} {...etc} />;
 };
