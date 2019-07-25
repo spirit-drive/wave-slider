@@ -143,6 +143,7 @@ const Slider = ({
     prevSlide.current = slide;
     style.zIndex = ++zIndex.current;
     requestAnimationFrame(() => {
+      // for some browsers
       setTimeout(() => {
         style.transition = `width ${transitionDuration}ms ${transitionTimingFunction}`;
         style.width = '100%';
