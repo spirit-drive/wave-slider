@@ -207,7 +207,16 @@ const Slider = ({
           </div>
         ))}
       </div>
-      {navigation && <Navigation slide={slide} count={count} toSlide={toSlide} {...navProps} />}
+      {navigation && (
+        <Navigation
+          slide={slide}
+          count={count}
+          toSlide={toSlide}
+          autoPlay={autoPlay}
+          interval={interval}
+          {...navProps}
+        />
+      )}
       {withManageButtons && (
         <Fragment>
           <BackButton className={cn(classNameManageButtons, classNameBackButton)} onClick={back}>
@@ -255,6 +264,7 @@ Slider.propTypes = {
   onChangeSlide: PropTypes.func,
   nextButtonText: PropTypes.string,
   backButtonText: PropTypes.string,
+  colorIndicator: PropTypes.string,
 };
 
 Slider.defaultProps = {
@@ -272,7 +282,7 @@ Slider.defaultProps = {
   withManageButtons: true,
   withFixedWidth: true,
   withSwipe: true,
-  autoPlay: true,
+  autoPlay: false,
   isReverse: false,
   stopOnHover: true,
   navigationPosition: 'center',
@@ -289,6 +299,7 @@ Slider.defaultProps = {
   onChangeSlide: undefined,
   nextButtonText: 'next',
   backButtonText: 'back',
+  colorIndicator: '#f25',
 };
 
 export default Slider;

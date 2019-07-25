@@ -18,6 +18,7 @@ const Navigation = ({
   classNameButtons,
   classNameWrapperPoint,
   withIndicator,
+  ...indicatorProps
 }) => {
   const styleNavButton = useMemo(() => ({ width: `${sizeNavButton}px`, height: `${sizeNavButton}px` }), [
     sizeNavButton,
@@ -41,10 +42,14 @@ const Navigation = ({
         .map((_, i) => ({ transform: `${translate}(${(indentBetweenNavButtons + sizeNavButton) * i}px)` })),
     [count, indentBetweenNavButtons, sizeNavButton, translate]
   );
-  const styleForNavButtons = { ...styleNavButton, ...pointPositions[slide] };
+  const styleForNavButtons = useMemo(() => ({ ...styleNavButton, ...pointPositions[slide] }), [
+    pointPositions,
+    slide,
+    styleNavButton,
+  ]);
   return (
     <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationPosition}`, classNameNav)}>
-      {withIndicator && <Indicator style={styleForNavButtons} />}
+      {withIndicator && <Indicator style={styleForNavButtons} {...indicatorProps} size={sizeNavButton} />}
       <div className={cn('wave-slider-nav__point-wrapper', classNameWrapperPoint)} style={styleForNavButtons}>
         <div className={cn('wave-slider-nav__point', classNamePoints, classNamePoint)} style={stylePoints} />
       </div>
@@ -73,6 +78,7 @@ Navigation.propTypes = {
   sizeNavButton: PropTypes.number.isRequired,
   sizePoints: PropTypes.number.isRequired,
   indentBetweenNavButtons: PropTypes.number.isRequired,
+  colorIndicator: PropTypes.string.isRequired,
   classNameNav: PropTypes.string,
   classNamePoints: PropTypes.string,
   classNamePoint: PropTypes.string,
