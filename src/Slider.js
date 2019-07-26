@@ -100,47 +100,41 @@ const Slider = ({
 
   const clear = useMemo(() => (autoPlay ? () => clearInterval(intervalId.current) : () => {}), [autoPlay]);
 
-  const stop = useMemo(
-    () =>
-      autoPlay
-        ? () => {
-            clear();
-            setPause(true);
-          }
-        : () => {},
-    [autoPlay, clear]
-  );
+  // eslint-disable-next-line no-return-assign
+  const start = useMemo(() => (autoPlay ? () => (intervalId.current = setInterval(move, interval)) : () => {}), [
+    autoPlay,
+    interval,
+    move,
+  ]);
 
-  const play = useMemo(
-    () =>
-      autoPlay
-        ? () => {
-            setPause(false);
-            intervalId.current = setInterval(move, interval);
-          }
-        : () => {},
-    [autoPlay, interval, move]
-  );
+  const stop = useMemo(() => (autoPlay ? () => setPause(true) : () => {}), [autoPlay]);
+
+  const play = useMemo(() => (autoPlay ? () => setPause(false) : () => {}), [autoPlay]);
 
   const nextEnhance = useCallback(() => {
     clear();
     next();
-    if (!isPause) play();
-  }, [clear, isPause, next, play]);
+    if (!isPause) start();
+  }, [clear, isPause, next, start]);
 
   const backEnhance = useCallback(() => {
     clear();
     back();
-    if (!isPause) play();
-  }, [back, clear, isPause, play]);
+    if (!isPause) start();
+  }, [back, clear, isPause, start]);
 
-  const swipeStart = useCallback(e => {
-    clickPos.current = e.clientX || e.touches[0].clientX;
-  }, []);
+  const swipeStart = useCallback(
+    e => {
+      clickPos.current = e.clientX || e.touches[0].clientX;
+      stop();
+    },
+    [stop]
+  );
 
   const swipeEnd = useCallback(() => {
     clickPos.current = null;
-  }, []);
+    play();
+  }, [play]);
 
   const swipeMove = useCallback(
     e => {
@@ -161,6 +155,11 @@ const Slider = ({
       onChangeSlide({ type: 'change', currentSlide: slide, prevSlide: prevSlide.current });
     }
   }, [slide]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isPause) clear();
+    else start();
+  }, [isPause, clear, start]);
 
   useEffect(() => {
     if (isPause) {
@@ -349,7 +348,7 @@ Slider.defaultProps = {
   withSwipe: true,
   autoPlay: true,
   isReverse: false,
-  stopOnHover: true,
+  stopOnHover: false,
   navigationPosition: 'center',
   sizeNavButton: 35,
   indentBetweenNavButtons: 15,
