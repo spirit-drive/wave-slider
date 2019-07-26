@@ -89,8 +89,6 @@ const Slider = ({
 
   const [slide, setSlide] = useReducer(reducer, initialSlide);
 
-  const toSlide = useCallback(payload => () => setSlide({ type: 'to', payload }), []);
-
   const zIndex = useRef(0);
   const intervalId = useRef(-1);
   const clickPos = useRef(null);
@@ -117,17 +115,20 @@ const Slider = ({
 
   const play = useMemo(() => (autoPlay ? () => setPause(false) : () => {}), [autoPlay]);
 
-  const nextEnhance = useCallback(() => {
-    clear();
-    next();
-    if (!isPause) start();
-  }, [clear, isPause, next, start]);
+  const createChange = useCallback(
+    callback => () => {
+      clear();
+      callback();
+      if (!isPause) start();
+    },
+    [clear, isPause, start]
+  );
 
-  const backEnhance = useCallback(() => {
-    clear();
-    back();
-    if (!isPause) start();
-  }, [back, clear, isPause, start]);
+  const toSlide = useMemo(() => payload => createChange(() => setSlide({ type: 'to', payload })), [createChange]);
+
+  const nextEnhance = useMemo(() => createChange(next), [createChange, next]);
+
+  const backEnhance = useMemo(() => createChange(back), [createChange, back]);
 
   const swipeStart = useCallback(
     e => {
