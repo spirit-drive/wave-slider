@@ -367,7 +367,7 @@ Slider.defaultProps = {
   onStopSlider: undefined,
   nextButtonText: 'next',
   backButtonText: 'back',
-  colorIndicator: '#f25',
+  colorIndicator: '#fff',
 };
 
 export default Slider;
