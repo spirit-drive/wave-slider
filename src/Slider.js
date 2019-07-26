@@ -131,10 +131,13 @@ const Slider = ({
     [stop]
   );
 
-  const swipeEnd = useCallback(() => {
-    clickPos.current = null;
-    play();
-  }, [play]);
+  const swipeEnd = useCallback(
+    e => {
+      clickPos.current = null;
+      if (e.touches || !stopOnHover) play();
+    },
+    [play, stopOnHover]
+  );
 
   const swipeMove = useCallback(
     e => {
@@ -348,7 +351,7 @@ Slider.defaultProps = {
   withSwipe: true,
   autoPlay: true,
   isReverse: false,
-  stopOnHover: false,
+  stopOnHover: true,
   navigationPosition: 'center',
   sizeNavButton: 35,
   indentBetweenNavButtons: 15,
