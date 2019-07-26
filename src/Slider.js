@@ -4,18 +4,6 @@ import cn from 'classnames';
 import Navigation from './Navigation';
 import './Slider.css';
 
-const errorHandlerForInitialSlide = (initialSlide, childrenLength) => {
-  if (initialSlide < 0) {
-    throw new Error(`invalid initialSlide: ${initialSlide}\ninitialSlide should be more or equal 0`);
-  }
-
-  if (initialSlide >= childrenLength) {
-    throw new Error(
-      `invalid initialSlide: ${initialSlide}\ninitialSlide should be less or equal ${childrenLength - 1}`
-    );
-  }
-};
-
 const Slider = ({
   className,
   transitionDuration,
@@ -43,7 +31,17 @@ const Slider = ({
 }) => {
   const quantity = useMemo(() => children.length, [children]);
 
-  useMemo(() => errorHandlerForInitialSlide(initialSlide, quantity), [initialSlide, quantity]);
+  const errorHandlerForInitialSlide = useCallback(() => {
+    if (initialSlide < 0) {
+      throw new Error(`invalid initialSlide: ${initialSlide}\ninitialSlide should be more or equal 0`);
+    }
+
+    if (initialSlide >= quantity) {
+      throw new Error(`invalid initialSlide: ${initialSlide}\ninitialSlide should be less or equal ${quantity - 1}`);
+    }
+  }, [initialSlide, quantity]);
+
+  useMemo(errorHandlerForInitialSlide, [errorHandlerForInitialSlide]);
 
   const [isPause, setPause] = useState(!autoPlay);
 
