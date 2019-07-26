@@ -21,8 +21,10 @@ const Indicator = ({
   isPause,
   ...etc
 }) => {
-  const half = useMemo(() => size / 2, [size]);
-  const arcStep = useMemo(() => ((2 * Math.PI) / interval) * canvasInterval, [canvasInterval, interval]);
+  const arcStep = useMemo(() => ((2 * Math.PI) / (interval - canvasInterval * 3)) * canvasInterval, [
+    canvasInterval,
+    interval,
+  ]);
   const intervalId = useRef(null);
   const count = useRef(0);
   const ctx = useRef(null);
@@ -34,14 +36,14 @@ const Indicator = ({
       intervalId.current = setInterval(() => {
         const angleStart = rotationStep * count.current + start;
         const angleEnd = arcStep * count.current;
-        drawArc(ctx.current, size, half, angleStart, angleEnd + angleStart);
+        drawArc(ctx.current, size, size / 2, angleStart, angleEnd + angleStart);
         ++count.current;
         if (angleEnd > 2 * Math.PI) {
           clearInterval(intervalId.current);
         }
       }, canvasInterval);
     }
-  }, [arcStep, canvasInterval, half, isPause, rotationStep, size]);
+  }, [arcStep, canvasInterval, isPause, rotationStep, size]);
 
   const clear = useCallback(() => {
     count.current = 0;
