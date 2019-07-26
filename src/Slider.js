@@ -41,7 +41,20 @@ const Slider = ({
     }
   }, [initialSlide, quantity]);
 
+  const errorHandlerForNavigationPosition = useCallback(() => {
+    if (
+      navProps.navigationPosition !== 'center' &&
+      navProps.navigationPosition !== 'left' &&
+      navProps.navigationPosition !== 'right'
+    ) {
+      throw new Error(
+        `invalid navigationPosition: ${navProps.navigationPosition}\nnavigationPosition should be 'center', 'left' or 'right'`
+      );
+    }
+  }, [navProps.navigationPosition]);
+
   useMemo(errorHandlerForInitialSlide, [errorHandlerForInitialSlide]);
+  useMemo(errorHandlerForNavigationPosition, [errorHandlerForNavigationPosition]);
 
   const [isPause, setPause] = useState(!autoPlay);
 
