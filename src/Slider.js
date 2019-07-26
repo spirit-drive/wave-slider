@@ -6,6 +6,11 @@ import './Slider.css';
 
 const Slider = ({
   className,
+  classNameManageButtons,
+  classNameNextButton,
+  classNameBackButton,
+  classNamePlayButton,
+  classNameStopButton,
   transitionDuration,
   transitionTimingFunction,
   children,
@@ -20,12 +25,13 @@ const Slider = ({
   withFixedWidth,
   nextButtonText,
   backButtonText,
-  classNameManageButtons,
-  classNameNextButton,
-  classNameBackButton,
+  playButtonText,
+  stopButtonText,
   withManageButtons,
   nextButton: NextButton,
   backButton: BackButton,
+  playButton: PlayButton,
+  stopButton: StopButton,
   onChangeSlide,
   onPlaySlider,
   onStopSlider,
@@ -287,6 +293,16 @@ const Slider = ({
           <NextButton className={cn(classNameManageButtons, classNameNextButton)} onClick={nextEnhance}>
             {nextButtonText}
           </NextButton>
+          {PlayButton && (
+            <PlayButton className={cn(classNameManageButtons, classNamePlayButton)} onClick={play}>
+              {playButtonText}
+            </PlayButton>
+          )}
+          {StopButton && (
+            <StopButton className={cn(classNameManageButtons, classNameStopButton)} onClick={stop}>
+              {stopButtonText}
+            </StopButton>
+          )}
         </Fragment>
       )}
     </div>
@@ -297,8 +313,23 @@ Slider.propTypes = {
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.func]).isRequired,
   nextButton: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.func]),
   backButton: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.func]),
+  playButton: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.func]),
+  stopButton: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.func]),
+  nextButtonText: PropTypes.string,
+  backButtonText: PropTypes.string,
+  playButtonText: PropTypes.string,
+  stopButtonText: PropTypes.string,
   className: PropTypes.string,
   classNameNav: PropTypes.string,
+  classNamePoints: PropTypes.string,
+  classNamePoint: PropTypes.string,
+  classNameButtons: PropTypes.string,
+  classNameWrapperPoint: PropTypes.string,
+  classNameManageButtons: PropTypes.string,
+  classNameNextButton: PropTypes.string,
+  classNameBackButton: PropTypes.string,
+  classNamePlayButton: PropTypes.string,
+  classNameStopButton: PropTypes.string,
   interval: PropTypes.number,
   canvasInterval: PropTypes.number,
   offsetForSwipeStep: PropTypes.number,
@@ -318,26 +349,32 @@ Slider.propTypes = {
   sizePoints: PropTypes.number,
   rotationStep: PropTypes.number,
   indentBetweenNavButtons: PropTypes.number,
-  classNamePoints: PropTypes.string,
-  classNamePoint: PropTypes.string,
-  classNameButtons: PropTypes.string,
-  classNameWrapperPoint: PropTypes.string,
-  classNameManageButtons: PropTypes.string,
-  classNameNextButton: PropTypes.string,
-  classNameBackButton: PropTypes.string,
   onChangeSlide: PropTypes.func,
   onPlaySlider: PropTypes.func,
   onStopSlider: PropTypes.func,
-  nextButtonText: PropTypes.string,
-  backButtonText: PropTypes.string,
   colorIndicator: PropTypes.string,
 };
 
 Slider.defaultProps = {
   nextButton: 'button',
   backButton: 'button',
+  playButton: 'button',
+  stopButton: 'button',
+  nextButtonText: 'next',
+  backButtonText: 'back',
+  playButtonText: 'play',
+  stopButtonText: 'stop',
   className: undefined,
   classNameNav: undefined,
+  classNamePoints: undefined,
+  classNamePoint: undefined,
+  classNameButtons: undefined,
+  classNameWrapperPoint: undefined,
+  classNameManageButtons: undefined,
+  classNameNextButton: undefined,
+  classNameBackButton: undefined,
+  classNamePlayButton: undefined,
+  classNameStopButton: undefined,
   interval: 1000,
   canvasInterval: 30,
   offsetForSwipeStep: 50,
@@ -351,24 +388,15 @@ Slider.defaultProps = {
   withSwipe: true,
   autoPlay: true,
   isReverse: false,
-  stopOnHover: true,
+  stopOnHover: false,
   navigationPosition: 'center',
   sizeNavButton: 35,
   indentBetweenNavButtons: 15,
   sizePoints: 10,
   rotationStep: Math.PI / 50,
-  classNamePoints: undefined,
-  classNamePoint: undefined,
-  classNameButtons: undefined,
-  classNameWrapperPoint: undefined,
-  classNameManageButtons: undefined,
-  classNameNextButton: undefined,
-  classNameBackButton: undefined,
   onChangeSlide: undefined,
   onPlaySlider: undefined,
   onStopSlider: undefined,
-  nextButtonText: 'next',
-  backButtonText: 'back',
   colorIndicator: '#fff',
 };
 
