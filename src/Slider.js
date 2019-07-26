@@ -167,19 +167,18 @@ const Slider = ({
   }, [slide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (isPause) clear();
-    else start();
-  }, [isPause, clear, start]);
-
-  useEffect(() => {
     if (isPause) {
+      clear();
       if (typeof onStopSlider === 'function') {
         onStopSlider({ type: 'stop' });
       }
-    } else if (typeof onPlaySlider === 'function') {
-      onPlaySlider({ type: 'play' });
+    } else {
+      start();
+      if (typeof onPlaySlider === 'function') {
+        onPlaySlider({ type: 'play' });
+      }
     }
-  }, [isPause, onPlaySlider, onStopSlider]);
+  }, [clear, isPause, onPlaySlider, onStopSlider, start]);
 
   useEffect(() => {
     const {
