@@ -51,7 +51,13 @@ const Navigation = ({
   return (
     <div className={cn('wave-slider-nav', `wave-slider-nav_${navigationPosition}`, classNameNav)}>
       {withIndicator && autoPlay && (
-        <Indicator style={styleForIndicators} {...indicatorProps} slide={slide} size={sizeNavButton} />
+        <Indicator
+          style={styleNavButton}
+          pointPositions={pointPositions}
+          {...indicatorProps}
+          slide={slide}
+          size={sizeNavButton}
+        />
       )}
       <div className={cn('wave-slider-nav__point-wrapper', classNameWrapperPoint)} style={styleForIndicators}>
         <div className={cn('wave-slider-nav__point', classNamePoints, classNamePoint)} style={stylePoints} />

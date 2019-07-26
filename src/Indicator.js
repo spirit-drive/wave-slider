@@ -10,7 +10,17 @@ const drawArc = (context, size, radius, start, end) => {
   context.closePath();
 };
 
-const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, canvasInterval, isPause, ...etc }) => {
+const Indicator = ({
+  pointPositions,
+  size,
+  colorIndicator,
+  interval,
+  slide,
+  rotationStep,
+  canvasInterval,
+  isPause,
+  ...etc
+}) => {
   const half = useMemo(() => size / 2, [size]);
   const arcStep = useMemo(() => ((2 * Math.PI) / interval) * canvasInterval, [canvasInterval, interval]);
   const intervalId = useRef(null);
@@ -50,10 +60,19 @@ const Indicator = ({ size, colorIndicator, interval, slide, rotationStep, canvas
     return clear;
   }, [isPause, slide, clear, draw]);
 
+  useEffect(() => {
+    canvas.current.style.transform = pointPositions[slide].transform;
+  }, [pointPositions, slide]);
+
   return <canvas ref={canvas} className="wave-slider-canvas" width={size} height={size} {...etc} />;
 };
 
 Indicator.propTypes = {
+  pointPositions: PropTypes.arrayOf(
+    PropTypes.shape({
+      transform: PropTypes.string.isRequired,
+    })
+  ).isRequired,
   colorIndicator: PropTypes.string.isRequired,
   size: PropTypes.number.isRequired,
   canvasInterval: PropTypes.number.isRequired,
