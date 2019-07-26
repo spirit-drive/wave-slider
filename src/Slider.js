@@ -27,6 +27,8 @@ const Slider = ({
   nextButton: NextButton,
   backButton: BackButton,
   onChangeSlide,
+  onPlaySlider,
+  onStopSlider,
   ...navProps
 }) => {
   const quantity = useMemo(() => children.length, [children]);
@@ -156,9 +158,19 @@ const Slider = ({
 
   useEffect(() => {
     if (typeof onChangeSlide === 'function') {
-      onChangeSlide({ currentSlide: slide, prevSlide: prevSlide.current });
+      onChangeSlide({ type: 'change', currentSlide: slide, prevSlide: prevSlide.current });
     }
   }, [slide]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isPause) {
+      if (typeof onStopSlider === 'function') {
+        onStopSlider({ type: 'stop' });
+      }
+    } else if (typeof onPlaySlider === 'function') {
+      onPlaySlider({ type: 'play' });
+    }
+  }, [isPause, onPlaySlider, onStopSlider]);
 
   useEffect(() => {
     const {
@@ -312,6 +324,8 @@ Slider.propTypes = {
   classNameNextButton: PropTypes.string,
   classNameBackButton: PropTypes.string,
   onChangeSlide: PropTypes.func,
+  onPlaySlider: PropTypes.func,
+  onStopSlider: PropTypes.func,
   nextButtonText: PropTypes.string,
   backButtonText: PropTypes.string,
   colorIndicator: PropTypes.string,
@@ -322,7 +336,7 @@ Slider.defaultProps = {
   backButton: 'button',
   className: undefined,
   classNameNav: undefined,
-  interval: 5000,
+  interval: 1000,
   canvasInterval: 30,
   offsetForSwipeStep: 50,
   initialSlide: 0,
@@ -349,6 +363,8 @@ Slider.defaultProps = {
   classNameNextButton: undefined,
   classNameBackButton: undefined,
   onChangeSlide: undefined,
+  onPlaySlider: undefined,
+  onStopSlider: undefined,
   nextButtonText: 'next',
   backButtonText: 'back',
   colorIndicator: '#f25',
