@@ -2,7 +2,7 @@ import React, { Fragment, useMemo, useState, useReducer, useCallback, useEffect,
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import Navigation from './Navigation';
-import './Slider.css';
+import './Slider.styl';
 
 const Slider = ({
   className,

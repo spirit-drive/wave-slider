@@ -1,6 +1,6 @@
 import React from 'react';
 import Slider from './Slider';
-import './App.css';
+import './App.styl';
 
 const App = () => (
   <div className="App">

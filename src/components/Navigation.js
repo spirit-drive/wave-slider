@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import Indicator from './Indicator';
-import './Navigation.css';
+import './Navigation.styl';
 
 const Navigation = ({
   quantity,

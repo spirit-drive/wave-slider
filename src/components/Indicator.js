@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import './Indicator.css';
+import './Indicator.styl';
 
 const drawArc = (context, size, radius, start, end) => {
   context.clearRect(0, 0, size, size);
