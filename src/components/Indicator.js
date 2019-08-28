@@ -5,7 +5,7 @@ import './Indicator.styl';
 const drawArc = (context, size, radius, start, end) => {
   context.clearRect(0, 0, size, size);
   context.beginPath();
-  context.arc(radius, radius, radius - 1.5, start, end);
+  context.arc(radius, radius, radius - 1, start, end);
   context.stroke();
   context.closePath();
 };
@@ -25,6 +25,12 @@ const Indicator = ({
     canvasInterval,
     interval,
   ]);
+
+  const correctedSize = useMemo(() => {
+    const k = window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI; // polyfill for IE < 11
+    return k * size;
+  }, [size]);
+
   const intervalId = useRef(null);
   const count = useRef(0);
   const ctx = useRef(null);
@@ -36,20 +42,20 @@ const Indicator = ({
       intervalId.current = setInterval(() => {
         const angleStart = rotationStep * count.current + start;
         const angleEnd = arcStep * count.current;
-        drawArc(ctx.current, size, size / 2, angleStart, angleEnd + angleStart);
+        drawArc(ctx.current, correctedSize, correctedSize / 2, angleStart, angleEnd + angleStart);
         ++count.current;
         if (angleEnd > 2 * Math.PI) {
           clearInterval(intervalId.current);
         }
       }, canvasInterval);
     }
-  }, [arcStep, canvasInterval, isPause, rotationStep, size]);
+  }, [arcStep, canvasInterval, isPause, rotationStep, correctedSize]);
 
   const clear = useCallback(() => {
     count.current = 0;
     clearInterval(intervalId.current);
-    ctx.current.clearRect(0, 0, size, size);
-  }, [size]);
+    ctx.current.clearRect(0, 0, correctedSize, correctedSize);
+  }, [correctedSize]);
 
   useEffect(() => {
     ctx.current = canvas.current.getContext('2d');
@@ -66,7 +72,7 @@ const Indicator = ({
     canvas.current.style.transform = pointPositions[slide].transform;
   }, [pointPositions, slide]);
 
-  return <canvas ref={canvas} className="wave-slider-canvas" width={size} height={size} {...etc} />;
+  return <canvas ref={canvas} className="wave-slider-canvas" width={correctedSize} height={correctedSize} {...etc} />;
 };
 
 Indicator.propTypes = {

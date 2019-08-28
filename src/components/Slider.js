@@ -375,7 +375,7 @@ Slider.defaultProps = {
   classNameBackButton: undefined,
   classNamePlayButton: undefined,
   classNameStopButton: undefined,
-  interval: 1000,
+  interval: 3000,
   canvasInterval: 30,
   offsetForSwipeStep: 50,
   initialSlide: 0,
